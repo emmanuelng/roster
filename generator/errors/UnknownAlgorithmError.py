@@ -1,0 +1,2 @@
+class UnknownAlgorithmError(Exception):
+    pass
