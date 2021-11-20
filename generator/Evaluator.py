@@ -6,7 +6,7 @@ from dataset.Person import Person
 class Evaluator(ABC):
 
     @abstractmethod
-    def evaluate_assignment(self, roster_sequence_no: int, person: Person, role: str) -> float:
+    def assignment_score(self, roster_sequence_no: int, person: Person, role: str) -> float:
         """
         Evaluates an assignment in a roster.
 
