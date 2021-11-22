@@ -7,18 +7,23 @@ from dataset.Person import Person
 from dataset.Roster import Roster
 from generator import Generator
 from generator.Algorithm import Algorithm
+from generator.errors.InvalidParameterError import InvalidParameterError
 from generator.errors.NotEnoughResourcesError import NotEnoughResourcesError
 
 
 class TreeAlgorithm(Algorithm):
 
-    def __init__(self, generator: Generator) -> None:
+    def __init__(self, generator: Generator, quality: str) -> None:
         """
         Constructor.
 
         :param generator: Generator associated to this algorithm.
         """
         super().__init__(generator)
+        self._quality = quality
+
+        if quality != "high" and quality != "medium" and quality != "low":
+            raise InvalidParameterError()
 
     def generate_roster(self, roster_sequence_no: int) -> Roster:
         persons = self.dataset.get_persons()
@@ -52,6 +57,9 @@ class TreeAlgorithm(Algorithm):
         :param nodes: List of nodes.
         :return: List of best nodes. All nodes in the list are equally optimal.
         """
+        if self._quality == "high":
+            return nodes
+
         max_score, best_nodes = None, []
 
         for node in nodes:
@@ -60,6 +68,9 @@ class TreeAlgorithm(Algorithm):
                 max_score, best_nodes = score, []
             if score == max_score:
                 best_nodes.append(node)
+
+        if self._quality == "low":
+            return [best_nodes[0]] if len(best_nodes) > 0 else []
 
         return best_nodes
 

@@ -30,7 +30,9 @@ class Generator:
 
         self._algorithms = {
             "simple": SimpleAlgorithm(self),
-            "tree": TreeAlgorithm(self)
+            "tree_fast": TreeAlgorithm(self, quality="low"),
+            "tree_medium": TreeAlgorithm(self, quality="medium"),
+            "tree_slow": TreeAlgorithm(self, quality="high")
         }
 
     @property
@@ -63,7 +65,7 @@ class Generator:
          roster 2.
         :return: A roster.
         """
-        algorithm_name = self._config.get("algorithm", "tree")
+        algorithm_name = self._config.get("algorithm", "tree_fast")
         if algorithm_name not in self._algorithms:
             raise UnknownAlgorithmError()
 
