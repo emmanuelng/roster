@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 from dataset.Dataset import Dataset
-from dataset.Person import Person
-from dataset.Roster import Roster
+from dataset.objects.Person import Person
+from dataset.objects.Roster import Roster
 from generator import Generator
 
 

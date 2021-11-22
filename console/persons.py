@@ -3,7 +3,7 @@ from builtins import sorted
 import click
 
 from dataset.Dataset import Dataset
-from dataset.Person import Person
+from dataset.objects.Person import Person
 
 
 @click.command()

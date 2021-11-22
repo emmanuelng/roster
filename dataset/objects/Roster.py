@@ -1,8 +1,8 @@
-from dataset.DataObject import DataObject
-from dataset.Person import Person
+from dataset.Object import Object
+from dataset.objects.Person import Person
 
 
-class Roster(DataObject):
+class Roster(Object):
 
     def __init__(self, sequence_no: int, assignments: list[tuple[Person, str]] = None) -> None:
         """

@@ -1,7 +1,7 @@
-from dataset.DataObject import DataObject
+from dataset.Object import Object
 
 
-class Pattern(DataObject):
+class Pattern(Object):
 
     def __init__(self, identifier: str) -> None:
         """

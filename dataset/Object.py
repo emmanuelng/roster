@@ -2,7 +2,7 @@ from abc import ABC
 from typing import Callable
 
 
-class DataObject(ABC):
+class Object(ABC):
 
     def __init__(self) -> None:
         """

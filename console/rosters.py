@@ -2,7 +2,7 @@ import click
 
 from configuration.Configuration import Configuration
 from dataset.Dataset import Dataset
-from dataset.Roster import Roster
+from dataset.objects.Roster import Roster
 from generator.Generator import Generator
 
 

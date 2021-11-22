@@ -1,7 +1,7 @@
-from dataset.DataObject import DataObject
+from dataset.Object import Object
 
 
-class Person(DataObject):
+class Person(Object):
 
     def __init__(self, identifier: str, first_name: str, last_name: str, roles: list[str] = None) -> None:
         """

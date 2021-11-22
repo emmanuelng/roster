@@ -1,8 +1,8 @@
 from typing import Optional
 
-from dataset.Pattern import Pattern
-from dataset.Person import Person
-from dataset.Roster import Roster
+from dataset.objects.Pattern import Pattern
+from dataset.objects.Person import Person
+from dataset.objects.Roster import Roster
 from generator import Generator
 from generator.Algorithm import Algorithm
 from generator.errors.NotEnoughResourcesError import NotEnoughResourcesError

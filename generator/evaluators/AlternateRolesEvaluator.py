@@ -1,5 +1,5 @@
 from dataset.Dataset import Dataset
-from dataset.Person import Person
+from dataset.objects.Person import Person
 from generator.Evaluator import Evaluator
 
 
