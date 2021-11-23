@@ -1,3 +1,4 @@
+from console.config import *
 from console.patterns import *
 from console.persons import *
 from console.rosters import *
@@ -29,3 +30,7 @@ roster_cli.add_command(pattern_get)
 roster_cli.add_command(patterns_list)
 roster_cli.add_command(pattern_remove)
 roster_cli.add_command(pattern_assignment_set)
+
+roster_cli.add_command(config_get_all)
+roster_cli.add_command(config_get)
+roster_cli.add_command(config_set)
