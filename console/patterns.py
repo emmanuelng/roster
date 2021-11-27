@@ -17,7 +17,7 @@ def pattern_add(identifier):
 @click.argument("identifier")
 @click.argument("role")
 @click.argument("number")
-def pattern_assignment_set(identifier, role, number):
+def pattern_assignments_set(identifier, role, number):
     """
     Set an assignment of a pattern.
     """

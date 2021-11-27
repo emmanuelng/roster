@@ -77,7 +77,7 @@ class SimpleAlgorithm(Algorithm):
         :param role: The role
         :return: A list of persons.
         """
-        persons = self.dataset.get_persons(role=role)
+        persons = self.dataset.get_available_persons(roster.sequence_no, role=role)
         persons = list(filter(lambda p: not roster.is_assigned(p), persons))
 
         if len(persons) == 0:

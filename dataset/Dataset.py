@@ -3,6 +3,7 @@ import os.path
 from builtins import ValueError, open
 from typing import Optional
 
+from dataset.errors.ObjectNotFoundError import ObjectNotFoundError
 from dataset.objects.Pattern import Pattern
 from dataset.objects.Person import Person
 from dataset.objects.Roster import Roster
@@ -20,11 +21,27 @@ class Dataset:
         self._persons = []
         self._patterns = []
         self._rosters = []
+        self._absences = {}
 
         # Load dataset files.
+        self._read_absences()
         self._read_patterns()
         self._read_persons()
         self._read_rosters()
+
+    def add_absence(self, roster_sequence_no: int, person: Person):
+        """
+        Adds an absence.
+
+        :param roster_sequence_no: Sequence number of the roster in which the person will be absent.
+        :param person: The absent person.
+        """
+        if roster_sequence_no not in self._absences:
+            self._absences[roster_sequence_no] = []
+
+        if person.identifier not in self._absences[roster_sequence_no]:
+            self._absences[roster_sequence_no].append(person.identifier)
+            self._save_absences()
 
     def add_pattern(self, pattern: Pattern) -> None:
         """
@@ -65,6 +82,18 @@ class Dataset:
         self._rosters.append(roster)
         self._save_rosters()
 
+    def get_available_persons(self, roster_sequence_no: int, role: str = None) -> list[Person]:
+        """
+        Returns the list of available persons for a roster.
+
+        :param roster_sequence_no: Sequence number of the roster.
+        :param role: If given, only returns the persons with this role.
+        :return: A list of persons.
+        """
+        persons = self.get_persons(role=role)
+        absences = self._absences.get(roster_sequence_no, [])
+        return list(filter(lambda p: p.identifier not in absences, persons))
+
     def get_pattern(self, identifier: str) -> Pattern:
         """
         Finds a pattern using an identifier.
@@ -83,16 +112,45 @@ class Dataset:
 
     def get_person(self, identifier: str) -> Person:
         """
-        Finds a person using an identifier.
+        Finds the person with the given identifier.
 
         :return: The Person or None if the identifier doesn't exist.
         """
-        return next((p for p in self._persons if p.identifier == identifier), None)
+        person = next((p for p in self._persons if p.identifier == identifier), None)
+        if person is None:
+            raise ObjectNotFoundError()
+
+        return person
+
+    def get_person_absences(self, person: Person) -> list[int]:
+        """
+        Returns the list of rosters in which a person will be absent.
+
+        :param person: The person.
+        :return: List of roster sequence numbers.
+        """
+        rosters = []
+        for roster_sequence_no, persons in self._absences.items():
+            if person.identifier in persons:
+                rosters.append(roster_sequence_no)
+
+        return rosters
+
+    def get_roster_absences(self, roster_sequence_no: int) -> list[Person]:
+        """
+        Get the persons that will be absent for a given roster.
+
+        :param roster_sequence_no: Sequence number of the roster.
+        :return: The list of absent persons.
+        """
+        return self._absences.get(roster_sequence_no, [])
 
     def get_persons(self, identifier: str = None, role: str = None) -> list[Person]:
         """
         Returns the list of persons.
 
+        :param identifier: If given, only returns the person with this identifier.
+        :param role: If given, only returns the persons with this role.
         :return: A list of persons.
         """
         persons = self._persons
@@ -115,7 +173,10 @@ class Dataset:
         :return: The roster or None if it does not exist.
         """
         rosters = self.get_rosters(sequence_no=sequence_no)
-        return rosters[0] if len(rosters) > 0 else None
+        if len(rosters) <= 0:
+            raise ObjectNotFoundError()
+
+        return rosters[0]
 
     def get_rosters(self, sequence_no: int = None, before: int = None, after: int = None) -> list[Roster]:
         """
@@ -142,6 +203,22 @@ class Dataset:
 
         return list(rosters)
 
+    def remove_absence(self, roster_sequence_no: int, person: Person) -> None:
+        """
+        Removes an absence.
+
+        :param roster_sequence_no: Sequence number of the roster in which the person will be absent.
+        :param person: The absent person.
+        """
+        if roster_sequence_no not in self._absences:
+            return
+
+        if person.identifier not in self._absences[roster_sequence_no]:
+            return
+
+        self._absences[roster_sequence_no].remove(person.identifier)
+        self._save_absences()
+
     def remove_pattern(self, identifier: str) -> None:
         """
         Removes a pattern from the list of patterns.
@@ -167,6 +244,17 @@ class Dataset:
         """
         self._rosters = filter(lambda r: r.sequence_no != sequence_no, self._rosters)
         self._save_rosters()
+
+    def _read_absences(self) -> None:
+        """
+        Loads the list of absences from absences.csv.
+        """
+        self._absences.clear()
+
+        rows, nb_rows = self._read_csv_file("absences.csv")
+        for row_index in range(nb_rows):
+            roster_sequence_no, *persons_id_list = rows[row_index]
+            self._absences[int(roster_sequence_no)] = persons_id_list
 
     def _read_patterns(self) -> None:
         """
@@ -260,6 +348,19 @@ class Dataset:
         # Parse the file.
         rows = list(csv.reader(open(file_path)))
         return rows, len(rows)
+
+    def _save_absences(self) -> None:
+        """
+        Saves the list of absences.
+        """
+        rows = []
+
+        for roster_sequence_no, persons in self._absences.items():
+            if len(persons) > 0:
+                row = [str(roster_sequence_no)] + persons
+                rows.append(row)
+
+        self._write_csv_file("absences.csv", rows)
 
     def _save_patterns(self) -> None:
         """

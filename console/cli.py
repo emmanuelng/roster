@@ -1,3 +1,4 @@
+from console.absences import *
 from console.config import *
 from console.patterns import *
 from console.persons import *
@@ -18,6 +19,11 @@ roster_cli.add_command(person_roles_add)
 roster_cli.add_command(person_roles_get)
 roster_cli.add_command(persons_list)
 
+roster_cli.add_command(absence_add)
+roster_cli.add_command(absence_remove)
+roster_cli.add_command(absences_persons_get)
+roster_cli.add_command(absences_rosters_get)
+
 roster_cli.add_command(roster_add)
 roster_cli.add_command(roster_assign)
 roster_cli.add_command(roster_generate)
@@ -27,9 +33,9 @@ roster_cli.add_command(roster_person_remove)
 roster_cli.add_command(rosters_list)
 
 roster_cli.add_command(pattern_get)
-roster_cli.add_command(patterns_list)
 roster_cli.add_command(pattern_remove)
-roster_cli.add_command(pattern_assignment_set)
+roster_cli.add_command(pattern_assignments_set)
+roster_cli.add_command(patterns_list)
 
 roster_cli.add_command(config_get_all)
 roster_cli.add_command(config_get)

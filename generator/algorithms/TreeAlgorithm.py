@@ -26,7 +26,7 @@ class TreeAlgorithm(Algorithm):
             raise InvalidParameterError()
 
     def generate_roster(self, roster_sequence_no: int) -> Roster:
-        persons = self.dataset.get_persons()
+        persons = self.dataset.get_available_persons(roster_sequence_no)
         rosters = []
 
         for pattern in self.dataset.get_patterns():
