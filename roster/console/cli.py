@@ -1,3 +1,4 @@
+import click
 from console.absences import *
 from console.config import *
 from console.patterns import *
