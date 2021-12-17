@@ -1,7 +1,7 @@
 import click
 
 from configuration.Configuration import Configuration
-from dataset.Dataset import Dataset
+from dataset.datasets.CsvDataset import CsvDataset
 from dataset.objects.Roster import Roster
 from generator.Generator import Generator
 
@@ -12,7 +12,7 @@ def roster_add(sequence_number):
     """
     Create a new roster.
     """
-    Dataset().add_roster(Roster(sequence_number))
+    CsvDataset().add_roster(Roster(sequence_number))
 
 
 @click.command()
@@ -23,12 +23,12 @@ def roster_assign(sequence_number, person_identifier, role):
     """
     Assign a person to a role.
     """
-    roster = Dataset().get_roster(int(sequence_number))
+    roster = CsvDataset().get_roster(int(sequence_number))
     if roster is None:
         click.echo("Error: Roster not found")
         return
 
-    person = Dataset().get_person(person_identifier)
+    person = CsvDataset().get_person(person_identifier)
     if person is None:
         click.echo("Error: Person not found")
         return
@@ -43,7 +43,7 @@ def roster_generate(sequence_number, save):
     """
     Generate a roster.
     """
-    generator = Generator(Dataset(), Configuration())
+    generator = Generator(CsvDataset(), Configuration())
     generated_roster = generator.generate_roster(int(sequence_number))
 
     if generated_roster is None:
@@ -52,7 +52,7 @@ def roster_generate(sequence_number, save):
 
     click.echo(str(generated_roster))
     if save:
-        Dataset().add_roster(generated_roster)
+        CsvDataset().add_roster(generated_roster)
         click.echo("\nRoster saved!")
 
 
@@ -62,7 +62,7 @@ def roster_get(sequence_number):
     """
     Display the details of a specific roster.
     """
-    r = Dataset().get_roster(int(sequence_number))
+    r = CsvDataset().get_roster(int(sequence_number))
     click.echo(r if r is not None else "Error: Roster not found")
 
 
@@ -73,7 +73,7 @@ def roster_person_remove(sequence_number, person_identifier):
     """
     Remove a person from a roster.
     """
-    roster = Dataset().get_roster(int(sequence_number))
+    roster = CsvDataset().get_roster(int(sequence_number))
     if roster is None:
         click.echo("Error: Roster not found")
         return
@@ -87,7 +87,7 @@ def roster_remove(sequence_number):
     """
     Remove a roster.
     """
-    Dataset().remove_roster(int(sequence_number))
+    CsvDataset().remove_roster(int(sequence_number))
 
 
 @click.command()
@@ -95,5 +95,5 @@ def rosters_list():
     """
     Display the list of all rosters.
     """
-    for roster in Dataset().get_rosters():
+    for roster in CsvDataset().get_rosters():
         click.echo(roster.sequence_no)

@@ -1,6 +1,6 @@
 import click
 
-from dataset.Dataset import Dataset
+from dataset.datasets.CsvDataset import CsvDataset
 from dataset.objects.Pattern import Pattern
 
 
@@ -10,7 +10,7 @@ def pattern_add(identifier):
     """
     Create a new pattern.
     """
-    Dataset().add_pattern(Pattern(identifier))
+    CsvDataset().add_pattern(Pattern(identifier))
 
 
 @click.command()
@@ -21,7 +21,7 @@ def pattern_assignments_set(identifier, role, number):
     """
     Set an assignment of a pattern.
     """
-    p = Dataset().get_pattern(identifier)
+    p = CsvDataset().get_pattern(identifier)
     if p is None:
         click.echo("Error: Pattern not found.")
         return
@@ -35,7 +35,7 @@ def pattern_get(identifier):
     """
     Display the details of a pattern.
     """
-    p = Dataset().get_pattern(identifier)
+    p = CsvDataset().get_pattern(identifier)
     click.echo(p if p is not None else "Error: Pattern not found")
 
 
@@ -45,7 +45,7 @@ def pattern_remove(identifier):
     """
     Delete a pattern.
     """
-    Dataset().remove_pattern(identifier)
+    CsvDataset().remove_pattern(identifier)
 
 
 @click.command()
@@ -53,5 +53,5 @@ def patterns_list():
     """
     Display the list of patterns.
     """
-    for pattern in Dataset().get_patterns():
+    for pattern in CsvDataset().get_patterns():
         click.echo(pattern.identifier)

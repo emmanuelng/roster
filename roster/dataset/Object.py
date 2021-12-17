@@ -1,5 +1,4 @@
 from abc import ABC
-from typing import Callable
 
 
 class Object(ABC):
@@ -27,19 +26,4 @@ class Object(ABC):
         :param name: Name of the value.
         :param value: The value.
         """
-        modified = name in self._values
         self._values[name] = value
-
-        if not modified:
-            return
-
-        for callback in self._on_modify:
-            callback()
-
-    def on_modify(self, callback: Callable[[str, any, any], None]) -> None:
-        """
-        Registers a callback to call when this object is modified.
-
-        :param callback: The callback function.
-        """
-        self._on_modify.append(callback)
