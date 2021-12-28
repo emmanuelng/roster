@@ -2,7 +2,7 @@ from typing import Optional
 
 from configuration.Configuration import Configuration
 from dataset.Dataset import Dataset
-from dataset.objects.Roster import Roster
+from dataset.dataclasses.Roster import Roster
 from generator.Evaluator import Evaluator
 from generator.algorithms.SimpleAlgorithm import SimpleAlgorithm
 from generator.algorithms.TreeAlgorithm import TreeAlgorithm
@@ -12,6 +12,12 @@ from generator.evaluators.MaximizeRestTimeEvaluator import MaximizeRestTimeEvalu
 
 
 class Generator:
+    """
+    Roster generator.
+    """
+
+    _dataset: Dataset
+    _config: Configuration
 
     def __init__(self, dataset: Dataset, config: Configuration) -> None:
         """

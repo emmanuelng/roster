@@ -3,13 +3,16 @@ import os
 
 
 class Configuration:
+    _path: str
+    _values: dict[str, any]
 
-    def __init__(self, path="./roster_config.json"):
+    def __init__(self, path: str = "./roster_config.json"):
         """
         Constructor.
         """
         self._path = path
         self._values = {}
+
         self._read_config_file()
 
     @property

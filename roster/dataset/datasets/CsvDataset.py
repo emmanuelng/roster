@@ -1,14 +1,19 @@
 import csv
 from os import path
 
+from dataset.dataclasses.Absence import Absence
+from dataset.dataclasses.Pattern import Pattern
+from dataset.dataclasses.Person import Person
+from dataset.dataclasses.Roster import Roster
 from dataset.datasets.ArrayDataset import ArrayDataset
-from dataset.objects.Absence import Absence
-from dataset.objects.Pattern import Pattern
-from dataset.objects.Person import Person
-from dataset.objects.Roster import Roster
 
 
 class CsvDataset(ArrayDataset):
+    """
+    A dataset that uses CSV files.
+    """
+
+    _directory: str
 
     def __init__(self, directory: str = "./data") -> None:
         """
@@ -54,12 +59,12 @@ class CsvDataset(ArrayDataset):
 
         for row_index in range(nb_rows):
             identifier, *assignments = rows[row_index]
-
-            pattern = Pattern(identifier)
+            assignment_dict = {}
 
             for i in range(0, len(assignments), 2):
-                pattern.set_assignment(assignments[i], int(assignments[i + 1]))
+                assignment_dict[assignments[i]] = int(assignments[i + 1])
 
+            pattern = Pattern(identifier, assignment_dict)
             self._patterns.append(pattern)
 
     def _read_persons(self) -> None:

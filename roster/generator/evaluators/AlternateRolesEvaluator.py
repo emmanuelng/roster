@@ -1,11 +1,20 @@
 from dataset.Dataset import Dataset
-from dataset.objects.Person import Person
+from dataset.dataclasses.Person import Person
 from generator.Evaluator import Evaluator
 
 
 class AlternateRolesEvaluator(Evaluator):
+    """
+    Helps to optimize the variety of roles assigned to a person. Returns a score close to zero if the person was
+    assigned to the role recently.
+    """
 
     def __init__(self, dataset: Dataset) -> None:
+        """
+        Constructor.
+
+        :param dataset: The dataset.
+        """
         self._dataset = dataset
 
     def assignment_score(self, roster_sequence_no: int, person: Person, role: str) -> float:

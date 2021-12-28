@@ -1,12 +1,17 @@
 from abc import ABC, abstractmethod
 
 from dataset.Dataset import Dataset
-from dataset.objects.Person import Person
-from dataset.objects.Roster import Roster
+from dataset.dataclasses.Person import Person
+from dataset.dataclasses.Roster import Roster
 from generator import Generator
 
 
 class Algorithm(ABC):
+    """
+    Roster generation algorithm.
+    """
+
+    _generator: Generator
 
     def __init__(self, generator: Generator) -> None:
         self._generator = generator

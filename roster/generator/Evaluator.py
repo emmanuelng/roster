@@ -1,9 +1,12 @@
 from abc import ABC, abstractmethod
 
-from dataset.objects.Person import Person
+from dataset.dataclasses.Person import Person
 
 
 class Evaluator(ABC):
+    """
+    Assignment evaluator.
+    """
 
     @abstractmethod
     def assignment_score(self, roster_sequence_no: int, person: Person, role: str) -> float:

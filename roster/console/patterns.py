@@ -1,7 +1,7 @@
 import click
 
+from dataset.dataclasses.Pattern import Pattern
 from dataset.datasets.CsvDataset import CsvDataset
-from dataset.objects.Pattern import Pattern
 
 
 @click.command()

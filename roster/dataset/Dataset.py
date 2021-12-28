@@ -1,13 +1,16 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from dataset.objects.Absence import Absence
-from dataset.objects.Pattern import Pattern
-from dataset.objects.Person import Person
-from dataset.objects.Roster import Roster
+from dataset.dataclasses.Absence import Absence
+from dataset.dataclasses.Pattern import Pattern
+from dataset.dataclasses.Person import Person
+from dataset.dataclasses.Roster import Roster
 
 
 class Dataset(ABC):
+    """
+    Represents a set of data used by the program. This class is responsible for reading and saving the data.
+    """
 
     @abstractmethod
     def add_absence(self, roster_sequence_no: int, person: Person):

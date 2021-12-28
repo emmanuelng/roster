@@ -1,11 +1,19 @@
 from dataset.Dataset import Dataset
-from dataset.objects.Person import Person
+from dataset.dataclasses.Person import Person
 from generator.Evaluator import Evaluator
 
 
 class MaximizeRestTimeEvaluator(Evaluator):
+    """
+    Maximizes the rest time between two assignment of a person.
+    """
 
     def __init__(self, dataset: Dataset) -> None:
+        """
+        Constructor.
+
+        :param dataset: The dataset.
+        """
         self._dataset = dataset
 
     def assignment_score(self, roster_sequence_no: int, person: Person, role: str) -> float:

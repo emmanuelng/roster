@@ -1,9 +1,10 @@
+import dataclasses
 from builtins import sorted
 
 import click
 
+from dataset.dataclasses.Person import Person
 from dataset.datasets.CsvDataset import CsvDataset
-from dataset.objects.Person import Person
 
 
 @click.command()
@@ -28,15 +29,18 @@ def person_remove(identifier):
 
 
 @click.command()
-@click.argument("user_identifier")
+@click.argument("person_identifier")
 @click.argument("role")
 def person_roles_add(person_identifier, role):
     """
     Add a role to a person.
     """
-    person = CsvDataset().get_person(person_identifier)
-    if person is not None:
-        person.add_role(role)
+    dataset = CsvDataset()
+    person = dataset.get_person(person_identifier)
+
+    if person is not None and not person.has_role(role):
+        dataset.remove_person(person_identifier)
+        dataset.add_person(dataclasses.replace(person, roles=person.roles + [role]))
 
 
 @click.command()
@@ -59,4 +63,4 @@ def persons_list():
     """
     persons = sorted(CsvDataset().get_persons(), key=lambda p: p.full_name)
     for person in persons:
-        click.echo(person.full_name + " (" + person.identifier + ")")
+        click.echo(f"{person.full_name} ({person.identifier})")

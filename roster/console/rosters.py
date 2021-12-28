@@ -1,8 +1,8 @@
 import click
 
 from configuration.Configuration import Configuration
+from dataset.dataclasses.Roster import Roster
 from dataset.datasets.CsvDataset import CsvDataset
-from dataset.objects.Roster import Roster
 from generator.Generator import Generator
 
 

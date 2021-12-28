@@ -1,14 +1,18 @@
 from typing import Optional
 
-from dataset.objects.Pattern import Pattern
-from dataset.objects.Person import Person
-from dataset.objects.Roster import Roster
+from dataset.dataclasses.Pattern import Pattern
+from dataset.dataclasses.Person import Person
+from dataset.dataclasses.Roster import Roster
 from generator import Generator
 from generator.Algorithm import Algorithm
 from generator.errors.NotEnoughResourcesError import NotEnoughResourcesError
 
 
 class SimpleAlgorithm(Algorithm):
+    """
+    Simple algorithm. The simplest algorithm. For each pattern, goes through the list of roles and picks the best
+    persons for each of them. The solution depends on the order of the roles in the pattern and might not be optimal.
+    """
 
     def __init__(self, generator: Generator) -> None:
         """

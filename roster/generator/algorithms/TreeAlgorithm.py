@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Optional
 
-from dataset.objects.Pattern import Pattern
-from dataset.objects.Person import Person
-from dataset.objects.Roster import Roster
+from dataset.dataclasses.Pattern import Pattern
+from dataset.dataclasses.Person import Person
+from dataset.dataclasses.Roster import Roster
 from generator import Generator
 from generator.Algorithm import Algorithm
 from generator.errors.InvalidParameterError import InvalidParameterError
@@ -12,12 +12,23 @@ from generator.errors.NotEnoughResourcesError import NotEnoughResourcesError
 
 
 class TreeAlgorithm(Algorithm):
+    """
+    Tree algorithm. This algorithm uses an assignment tree to determine the best sequence of assignments.
+    """
+
+    _quality: str
 
     def __init__(self, generator: Generator, quality: str) -> None:
         """
         Constructor.
 
         :param generator: Generator associated to this algorithm.
+        :param quality: Quality of the solution. Can either be "high", "medium" or "low". In high quality, all sequences
+         of assignments are explored, which is very slow in general. However, the obtained solution is optimal. In
+         medium, only the best branches are explored. If at a given step multiple branches seem to have the same
+         optimality, all of them are explored. The obtained solution is optimal. In low quality, only the best sequences
+         are explored. If multiple branches seem to have the same optimality, only one is chosen arbitrarily and
+         explored. The solution might not be optimal, but it is relatively fast.
         """
         super().__init__(generator)
         self._quality = quality
@@ -85,6 +96,9 @@ class TreeAlgorithm(Algorithm):
 
 
 class _AssignmentNode:
+    """
+    Represents a node in the assignment tree.
+    """
 
     @staticmethod
     def get_root_node(roster_sequence_no: int, pattern: Pattern, persons: list[Person]):
@@ -108,6 +122,15 @@ class _AssignmentNode:
         root._remaining_roles = roles
 
         return root
+
+    _roster_sequence_no: int
+    _pattern: Optional[Pattern]
+    _parent: Optional[_AssignmentNode]
+    _person: Optional[Person]
+    _role: Optional[str]
+    _remaining_persons: list[Person]
+    _remaining_roles: list[str]
+    _children: Optional[list[_AssignmentNode]]
 
     def __init__(self):
         """

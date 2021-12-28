@@ -1,14 +1,22 @@
 from typing import Optional
 
 from dataset.Dataset import Dataset
+from dataset.dataclasses.Absence import Absence
+from dataset.dataclasses.Pattern import Pattern
+from dataset.dataclasses.Person import Person
+from dataset.dataclasses.Roster import Roster
 from dataset.errors.ObjectNotFoundError import ObjectNotFoundError
-from dataset.objects.Absence import Absence
-from dataset.objects.Pattern import Pattern
-from dataset.objects.Person import Person
-from dataset.objects.Roster import Roster
 
 
 class ArrayDataset(Dataset):
+    """
+    A simple dataset that uses python arrays to store the data.
+    """
+
+    _persons: list[Person]
+    _patterns: list[Pattern]
+    _rosters: list[Roster]
+    _absences: list[Absence]
 
     def __init__(self) -> None:
         """
@@ -121,10 +129,10 @@ class ArrayDataset(Dataset):
         )
 
     def remove_pattern(self, identifier: str) -> None:
-        self._patterns = filter(lambda p: p.identifier != identifier, self._patterns)
+        self._patterns = list(filter(lambda p: p.identifier != identifier, self._patterns))
 
     def remove_person(self, identifier: str) -> None:
-        self._persons = filter(lambda p: p.identifier != identifier, self._persons)
+        self._persons = list(filter(lambda p: p.identifier != identifier, self._persons))
 
     def remove_roster(self, sequence_no: int) -> None:
-        self._rosters = filter(lambda r: r.sequence_no != sequence_no, self._rosters)
+        self._rosters = list(filter(lambda r: r.sequence_no != sequence_no, self._rosters))
