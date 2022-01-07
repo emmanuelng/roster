@@ -3,6 +3,10 @@ import os
 
 
 class Configuration:
+    """
+    Configuration class.
+    """
+
     _path: str
     _values: dict[str, any]
 
@@ -15,8 +19,14 @@ class Configuration:
 
         self._read_config_file()
 
+    def __str__(self):
+        return str(self.values)
+
     @property
-    def values(self):
+    def values(self) -> dict[str, any]:
+        """
+        Configuration values.
+        """
         return self._values
 
     def get(self, key: str, default: any = None) -> any:

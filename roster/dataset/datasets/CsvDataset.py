@@ -10,7 +10,7 @@ from dataset.datasets.ArrayDataset import ArrayDataset
 
 class CsvDataset(ArrayDataset):
     """
-    A dataset that uses CSV files.
+    A dataset that stores the data in JSON files.
     """
 
     _directory: str
@@ -127,14 +127,13 @@ class CsvDataset(ArrayDataset):
         :param file_name: Name of the file with its extension.
         :return: A list of strings corresponding to the lines of the file.
         """
-        # Check that the file exists.
-        file_path = self._directory + "\\" + file_name
+        file_path = f"{self._directory}\\{file_name}"
         if not path.isfile(file_path):
             return [], 0
 
-        # Parse the file.
-        rows = list(csv.reader(open(file_path)))
-        return rows, len(rows)
+        with open(file_path) as file:
+            rows = list(csv.reader(file))
+            return rows, len(rows)
 
     def _save_absences(self) -> None:
         """
@@ -199,7 +198,5 @@ class CsvDataset(ArrayDataset):
         :param file_name: Name of the file.
         :param rows: Rows to write.
         """
-        file_path = self._directory + "\\" + file_name
-        file = open(file_path, "w")
-        file.write("\n".join(map(lambda r: ",".join(r), rows)))
-        file.close()
+        with open(f"{self._directory}\\{file_name}", "w") as file:
+            file.write("\n".join(map(lambda r: ",".join(r), rows)))

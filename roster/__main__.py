@@ -1,4 +1,4 @@
-from console.cli import roster_cli
+from app.apps.ConsoleApp import ConsoleApp
 
 if __name__ == '__main__':
-    roster_cli()
+    ConsoleApp().start()

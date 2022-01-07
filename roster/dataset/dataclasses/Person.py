@@ -10,7 +10,7 @@ class Person:
     identifier: str = field(repr=False)
     first_name: str = field(hash=False)
     last_name: str = field(hash=False)
-    roles: list[str] = field(hash=False, repr=False, default_factory=list)
+    roles: list[str] = field(hash=False, default_factory=list)
 
     @property
     def full_name(self) -> str:

@@ -13,6 +13,10 @@ class Roster:
     sequence_no: int
     assignments: dict[Person, str] = field(default_factory=dict, compare=False)
 
+    @property
+    def persons(self) -> list[Person]:
+        return list(self.assignments.keys())
+
     def assign(self, person: Person, role: str) -> None:
         """
         Assigns a person to a role.
