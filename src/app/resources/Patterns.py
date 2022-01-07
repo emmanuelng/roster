@@ -15,7 +15,6 @@ class Patterns(Resource):
         self._method("list", Action.GET, self.list)
         self._method("set", Action.CREATE, self.set)
 
-
     @staticmethod
     def create(context: Context, pattern_id: str) -> None:
         """

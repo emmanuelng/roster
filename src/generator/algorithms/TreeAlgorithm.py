@@ -112,7 +112,7 @@ class _AssignmentNode:
         """
         roles = []
         for role in pattern.roles:
-            roles += [role] * pattern[role]
+            roles += [role] * pattern.assignments[role]
 
         root = _AssignmentNode()
 
