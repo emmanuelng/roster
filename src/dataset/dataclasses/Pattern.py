@@ -9,4 +9,8 @@ class Pattern:
     """
 
     identifier: str
-    assignments: dict[str, int] = field(default_factory=list)
+    assignments: dict[str, int] = field(default_factory=dict)
+
+    @property
+    def roles(self) -> list[str]:
+        return self.assignments.keys()

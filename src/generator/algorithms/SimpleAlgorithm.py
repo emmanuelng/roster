@@ -27,7 +27,7 @@ class SimpleAlgorithm(Algorithm):
 
         for pattern in self.dataset.get_patterns():
             try:
-                roster = self._generate_roster_with_pattern(roster_sequence_no, pattern)
+                roster = self.__generate_roster_with_pattern(roster_sequence_no, pattern)
                 score = self.roster_score(roster)
 
                 if best_score is None or score > best_score:
@@ -40,7 +40,7 @@ class SimpleAlgorithm(Algorithm):
 
         return best_roster
 
-    def _generate_roster_with_pattern(self, sequence_no: int, pattern: Pattern) -> Optional[Roster]:
+    def __generate_roster_with_pattern(self, sequence_no: int, pattern: Pattern) -> Optional[Roster]:
         """
         Generates a roster with the given pattern.
 
@@ -51,12 +51,12 @@ class SimpleAlgorithm(Algorithm):
         roster = Roster(sequence_no)
 
         for role in pattern.roles:
-            number = pattern.get_number(role)
-            self._assign_persons_for_role(roster, role, number)
+            number = pattern.assignments[role]
+            self.__assign_persons_for_role(roster, role, number)
 
         return roster
 
-    def _assign_persons_for_role(self, roster: Roster, role: str, number: int) -> None:
+    def __assign_persons_for_role(self, roster: Roster, role: str, number: int) -> None:
         """
         Finds and assigns persons for a given role.
 
@@ -67,13 +67,13 @@ class SimpleAlgorithm(Algorithm):
         if number == 0:
             return
 
-        persons = self._find_persons_for_role(roster, role)
+        persons = self.__find_persons_for_role(roster, role)
         person_to_assign = max(persons, key=lambda p: self.assignment_score(roster.sequence_no, p, role))
         roster.assign(person_to_assign, role)
 
-        self._assign_persons_for_role(roster, role, number - 1)
+        self.__assign_persons_for_role(roster, role, number - 1)
 
-    def _find_persons_for_role(self, roster: Roster, role: str) -> list[Person]:
+    def __find_persons_for_role(self, roster: Roster, role: str) -> list[Person]:
         """
         Returns the list of persons that can do a role in a roster.
 

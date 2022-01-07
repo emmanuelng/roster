@@ -11,17 +11,17 @@ class Algorithm(ABC):
     Roster generation algorithm.
     """
 
-    _generator: Generator
+    __generator: Generator
 
     def __init__(self, generator: Generator) -> None:
-        self._generator = generator
+        self.__generator = generator
 
     @property
     def dataset(self) -> Dataset:
         """
         Dataset used by this algorithm.
         """
-        return self._generator.dataset
+        return self.__generator.dataset
 
     def assignment_score(self, roster_sequence_no: int, person: Person, role: str) -> float:
         """
@@ -35,8 +35,8 @@ class Algorithm(ABC):
         total_weight = 0
         score = 0.0
 
-        for name, evaluator in self._generator.evaluators.items():
-            weight = int(self._generator.configuration.get("weight_" + name, 1))
+        for name, evaluator in self.__generator.evaluators.items():
+            weight = int(self.__generator.configuration.get("weight_" + name, 1))
             score += (evaluator.assignment_score(roster_sequence_no, person, role) * weight)
             total_weight += weight
 

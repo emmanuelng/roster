@@ -13,7 +13,7 @@ class CsvDataset(ArrayDataset):
     A dataset that stores the data in JSON files.
     """
 
-    _directory: str
+    __directory: str
 
     def __init__(self, directory: str = "./data") -> None:
         """
@@ -23,20 +23,20 @@ class CsvDataset(ArrayDataset):
         """
         super().__init__()
 
-        self._directory = directory
+        self.__directory = directory
 
-        self._read_absences()
-        self._read_patterns()
-        self._read_persons()
-        self._read_rosters()
+        self.__read_absences()
+        self.__read_patterns()
+        self.__read_persons()
+        self.__read_rosters()
 
     def __del__(self):
-        self._save_absences()
-        self._save_patterns()
-        self._save_persons()
-        self._save_rosters()
+        self.__save_absences()
+        self.__save_patterns()
+        self.__save_persons()
+        self.__save_rosters()
 
-    def _read_absences(self) -> None:
+    def __read_absences(self) -> None:
         """
         Loads the list of absences from absences.csv.
         """
@@ -47,7 +47,7 @@ class CsvDataset(ArrayDataset):
             roster_sequence_no, person_identifier = rows[row_index]
             self._absences.append(Absence(roster_sequence_no, person_identifier))
 
-    def _read_patterns(self) -> None:
+    def __read_patterns(self) -> None:
         """
         Loads the list of patterns from patterns.csv.
         """
@@ -67,7 +67,7 @@ class CsvDataset(ArrayDataset):
             pattern = Pattern(identifier, assignment_dict)
             self._patterns.append(pattern)
 
-    def _read_persons(self) -> None:
+    def __read_persons(self) -> None:
         """
         Loads the list of persons from persons.csv.
         """
@@ -93,7 +93,7 @@ class CsvDataset(ArrayDataset):
         except ValueError:
             raise SyntaxError("Syntax error in persons.csv near line " + str(row_index + 1))
 
-    def _read_rosters(self) -> None:
+    def __read_rosters(self) -> None:
         """
         Loads the list of rosters from rosters.csv.
         """
@@ -127,7 +127,7 @@ class CsvDataset(ArrayDataset):
         :param file_name: Name of the file with its extension.
         :return: A list of strings corresponding to the lines of the file.
         """
-        file_path = f"{self._directory}\\{file_name}"
+        file_path = f"{self.__directory}\\{file_name}"
         if not path.isfile(file_path):
             return [], 0
 
@@ -135,7 +135,7 @@ class CsvDataset(ArrayDataset):
             rows = list(csv.reader(file))
             return rows, len(rows)
 
-    def _save_absences(self) -> None:
+    def __save_absences(self) -> None:
         """
         Saves the list of absences.
         """
@@ -147,7 +147,7 @@ class CsvDataset(ArrayDataset):
 
         self._write_csv_file("absences.csv", rows)
 
-    def _save_patterns(self) -> None:
+    def __save_patterns(self) -> None:
         """
         Saves the list of patterns.
         """
@@ -162,7 +162,7 @@ class CsvDataset(ArrayDataset):
 
         self._write_csv_file("patterns.csv", rows)
 
-    def _save_rosters(self) -> None:
+    def __save_rosters(self) -> None:
         """
         Saves the rosters.
         """
@@ -176,7 +176,7 @@ class CsvDataset(ArrayDataset):
 
         self._write_csv_file("rosters.csv", rows)
 
-    def _save_persons(self) -> None:
+    def __save_persons(self) -> None:
         """
         Saves the list of persons.
         """
@@ -198,5 +198,5 @@ class CsvDataset(ArrayDataset):
         :param file_name: Name of the file.
         :param rows: Rows to write.
         """
-        with open(f"{self._directory}\\{file_name}", "w") as file:
+        with open(f"{self.__directory}\\{file_name}", "w") as file:
             file.write("\n".join(map(lambda r: ",".join(r), rows)))

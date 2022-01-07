@@ -14,29 +14,29 @@ class Resource(ABC):
     sub-resources.
     """
 
-    _methods: dict[str, Method]
-    _child_resources: dict[str, Resource]
+    __methods: dict[str, Method]
+    __child_resources: dict[str, Resource]
 
     def __init__(self):
         """
         Constructor.
         """
-        self._methods = {}
-        self._child_resources = {}
+        self.__methods = {}
+        self.__child_resources = {}
 
     @property
     def children(self) -> list[Resource]:
         """
         Child resources.
         """
-        return self._child_resources.values()
+        return self.__child_resources.values()
 
     @property
     def methods(self) -> list[Method]:
         """
         Resource methods.
         """
-        return self._methods.values()
+        return self.__methods.values()
 
     def execute_method(self, path: list[str], *args) -> any:
         """
@@ -50,13 +50,13 @@ class Resource(ABC):
 
         # The path contains one element: call the corresponding method.
         if path_size == 1:
-            method = self._methods.get(path[0], None)
+            method = self.__methods.get(path[0], None)
             if method is not None:
                 return method(*args)
 
         # The path contains multiple elements: go to the next child resource.
         elif path_size > 1:
-            child = self._child_resources.get(path[0], None)
+            child = self.__child_resources.get(path[0], None)
             if child is not None:
                 return child.execute_method(path[1:], *args)
 
@@ -69,7 +69,7 @@ class Resource(ABC):
         :param name: Name of the child resource.
         :param resource: Child resource.
         """
-        self._child_resources[name] = resource
+        self.__child_resources[name] = resource
 
     def _method(self, name: str, action: Action, func: Callable) -> None:
         """
@@ -79,7 +79,7 @@ class Resource(ABC):
         :param action: Type of action performed by the method.
         :param func: Method function.
         """
-        self._methods[name] = Method(name, action, func)
+        self.__methods[name] = Method(name, action, func)
 
 
 class Action(Enum):

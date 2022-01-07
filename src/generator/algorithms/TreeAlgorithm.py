@@ -16,7 +16,7 @@ class TreeAlgorithm(Algorithm):
     Tree algorithm. This algorithm uses an assignment tree to determine the best sequence of assignments.
     """
 
-    _quality: str
+    __quality: str
 
     def __init__(self, generator: Generator, quality: str) -> None:
         """
@@ -31,7 +31,7 @@ class TreeAlgorithm(Algorithm):
          explored. The solution might not be optimal, but it is relatively fast.
         """
         super().__init__(generator)
-        self._quality = quality
+        self.__quality = quality
 
         if quality != "high" and quality != "medium" and quality != "low":
             raise InvalidParameterError()
@@ -52,7 +52,7 @@ class TreeAlgorithm(Algorithm):
                         rosters.append(node.build_roster())
                         continue
 
-                    node_queue += self._select_best_nodes(node.children)
+                    node_queue += self.__select_best_nodes(node.children)
             except NotEnoughResourcesError:
                 continue
 
@@ -61,31 +61,31 @@ class TreeAlgorithm(Algorithm):
 
         return max(rosters, key=self.roster_score)
 
-    def _select_best_nodes(self, nodes: list[_AssignmentNode]) -> list[_AssignmentNode]:
+    def __select_best_nodes(self, nodes: list[_AssignmentNode]) -> list[_AssignmentNode]:
         """
         Selects the most optimal nodes from a list of nodes.
 
         :param nodes: List of nodes.
         :return: List of best nodes. All nodes in the list are equally optimal.
         """
-        if self._quality == "high":
+        if self.__quality == "high":
             return nodes
 
         max_score, best_nodes = None, []
 
         for node in nodes:
-            score = self._evaluate_node(node)
+            score = self.__evaluate_node(node)
             if max_score is None or score > max_score:
                 max_score, best_nodes = score, []
             if score == max_score:
                 best_nodes.append(node)
 
-        if self._quality == "low":
+        if self.__quality == "low":
             return [best_nodes[0]] if len(best_nodes) > 0 else []
 
         return best_nodes
 
-    def _evaluate_node(self, node: _AssignmentNode) -> float:
+    def __evaluate_node(self, node: _AssignmentNode) -> float:
         """
         Computes a score indicating the optimality of a node. This function is used to compare nodes by optimality.
 
@@ -112,58 +112,58 @@ class _AssignmentNode:
         """
         roles = []
         for role in pattern.roles:
-            roles += [role] * pattern.get_number(role)
+            roles += [role] * pattern[role]
 
         root = _AssignmentNode()
 
-        root._pattern = pattern
-        root._roster_sequence_no = roster_sequence_no
-        root._remaining_persons = persons
-        root._remaining_roles = roles
+        root.__pattern = pattern
+        root.__roster_sequence_no = roster_sequence_no
+        root.__remaining_persons = persons
+        root.__remaining_roles = roles
 
         return root
 
-    _roster_sequence_no: int
-    _pattern: Optional[Pattern]
-    _parent: Optional[_AssignmentNode]
-    _person: Optional[Person]
-    _role: Optional[str]
-    _remaining_persons: list[Person]
-    _remaining_roles: list[str]
-    _children: Optional[list[_AssignmentNode]]
+    __roster_sequence_no: int
+    __pattern: Optional[Pattern]
+    __parent: Optional[_AssignmentNode]
+    __person: Optional[Person]
+    __role: Optional[str]
+    __remaining_persons: list[Person]
+    __remaining_roles: list[str]
+    __children: Optional[list[_AssignmentNode]]
 
     def __init__(self):
         """
         Constructor.
         """
-        self._roster_sequence_no = 0
-        self._pattern = None
-        self._parent = None
-        self._person = None
-        self._role = None
-        self._remaining_persons = None
-        self._remaining_roles = None
-        self._children = None
+        self.__roster_sequence_no = 0
+        self.__pattern = None
+        self.__parent = None
+        self.__person = None
+        self.__role = None
+        self.__remaining_persons = None
+        self.__remaining_roles = None
+        self.__children = None
 
     @property
     def children(self) -> list[_AssignmentNode]:
         """
         Child nodes.
         """
-        if self._children is not None:
-            return self._children
+        if self.__children is not None:
+            return self.__children
 
         child_nodes = []
 
-        for role in self._remaining_roles:
-            persons_with_role = list(filter(lambda p: p.has_role(role), self._remaining_persons))
+        for role in self.__remaining_roles:
+            persons_with_role = list(filter(lambda p: p.has_role(role), self.__remaining_persons))
             if len(persons_with_role) == 0:
                 raise NotEnoughResourcesError()
 
             for person in persons_with_role:
-                child_nodes.append(self._init_child(person, role))
+                child_nodes.append(self.__init_child(person, role))
 
-        self._children = child_nodes
+        self.__children = child_nodes
         return child_nodes
 
     @property
@@ -178,21 +178,21 @@ class _AssignmentNode:
         """
         Person.
         """
-        return self._person
+        return self.__person
 
     @property
     def role(self) -> Optional[str]:
         """
         Role.
         """
-        return self._role
+        return self.__role
 
     @property
     def roster_sequence_no(self) -> int:
         """
         Sequence number of the roster.
         """
-        return self._roster_sequence_no
+        return self.__roster_sequence_no
 
     def build_roster(self):
         """
@@ -200,14 +200,14 @@ class _AssignmentNode:
 
         :return: A roster.
         """
-        roster = Roster(self._roster_sequence_no)
-        for role in self._pattern.roles:
-            for person in self._get_assigned_persons(role):
+        roster = Roster(self.__roster_sequence_no)
+        for role in self.__pattern.roles:
+            for person in self.__get_assigned_persons(role):
                 roster.assign(person, role)
 
         return roster
 
-    def _get_assigned_persons(self, role: str = None) -> list[Person]:
+    def __get_assigned_persons(self, role: str = None) -> list[Person]:
         """
         Returns the list of persons assigned so far by this node and its ancestors.
 
@@ -218,8 +218,8 @@ class _AssignmentNode:
         current_node = self
 
         while current_node is not None:
-            current_person, current_role = current_node._person, current_node._role
-            current_node = current_node._parent
+            current_person, current_role = current_node.__person, current_node.__role
+            current_node = current_node.__parent
 
             if role is not None and role != current_role:
                 continue
@@ -228,7 +228,7 @@ class _AssignmentNode:
 
         return persons
 
-    def _init_child(self, person: Person, role: str) -> _AssignmentNode:
+    def __init_child(self, person: Person, role: str) -> _AssignmentNode:
         """
         Initializes a child node.
 
@@ -238,15 +238,15 @@ class _AssignmentNode:
         """
         child = _AssignmentNode()
 
-        child._roster_sequence_no = self._roster_sequence_no
-        child._pattern = self._pattern
-        child._parent = self
-        child._person = person
-        child._role = role
-        child._remaining_persons = self._remaining_persons.copy()
-        child._remaining_roles = self._remaining_roles.copy()
+        child.__roster_sequence_no = self.__roster_sequence_no
+        child.__pattern = self.__pattern
+        child.__parent = self
+        child.__person = person
+        child.__role = role
+        child.__remaining_persons = self.__remaining_persons.copy()
+        child.__remaining_roles = self.__remaining_roles.copy()
 
-        child._remaining_persons.remove(person)
-        child._remaining_roles.remove(role)
+        child.__remaining_persons.remove(person)
+        child.__remaining_roles.remove(role)
 
         return child

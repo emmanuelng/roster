@@ -16,8 +16,8 @@ class Generator:
     Roster generator.
     """
 
-    _dataset: Dataset
-    _config: Configuration
+    __dataset: Dataset
+    __config: Configuration
 
     def __init__(self, dataset: Dataset, config: Configuration) -> None:
         """
@@ -25,8 +25,8 @@ class Generator:
         :param dataset: The data used to access the dataset.
         :param config: Configuration of the generator.
         """
-        self._dataset = dataset
-        self._config = config
+        self.__dataset = dataset
+        self.__config = config
 
         self._evaluators = {
             "alternate_roles": AlternateRolesEvaluator(dataset),
@@ -45,14 +45,14 @@ class Generator:
         """
         Configuration of this generator.
         """
-        return self._config
+        return self.__config
 
     @property
     def dataset(self) -> Dataset:
         """
         Dataset used by this generator.
         """
-        return self._dataset
+        return self.__dataset
 
     @property
     def evaluators(self) -> list[Evaluator]:
@@ -70,7 +70,7 @@ class Generator:
          roster 2.
         :return: A roster.
         """
-        algorithm_name = self._config.get("algorithm", "tree_fast")
+        algorithm_name = self.__config.get("algorithm", "tree_fast")
         if algorithm_name not in self._algorithms:
             raise UnknownAlgorithmError()
 

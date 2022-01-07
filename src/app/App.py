@@ -13,8 +13,8 @@ class App(ABC):
     Application class.
     """
 
-    _context: Context
-    _resources: dict[str, Resource]
+    __context: Context
+    __resources: dict[str, Resource]
 
     def __init__(self, dataset: Dataset) -> None:
         """
@@ -22,8 +22,8 @@ class App(ABC):
 
         :param dataset: Dataset used by the application.
         """
-        self._context = Context(dataset)
-        self._resources = {}
+        self.__context = Context(dataset)
+        self.__resources = {}
 
         # Resources
         self._resource("persons", Persons())
@@ -38,9 +38,9 @@ class App(ABC):
         :return: The result of the method.
         """
         if len(path) > 1:
-            resource = self._resources.get(path[0], None)
+            resource = self.__resources.get(path[0], None)
             if resource is not None:
-                context = self._context
+                context = self.__context
                 return resource.execute_method(path[1:], context, *args)
 
         raise MethodNotFoundError()
@@ -58,4 +58,4 @@ class App(ABC):
 
         :param resource: Resource to add.
         """
-        self._resources[name] = resource
+        self.__resources[name] = resource
