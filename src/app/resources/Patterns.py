@@ -1,9 +1,20 @@
 from app.Context import Context
-from app.Resource import Resource
+from app.Resource import Resource, Action
 from dataset.dataclasses.Pattern import Pattern
 
 
 class Patterns(Resource):
+
+    def __init__(self):
+        super().__init__()
+
+        # Methods
+        self._method("create", Action.CREATE, self.create)
+        self._method("delete", Action.DELETE, self.delete)
+        self._method("get", Action.GET, self.get)
+        self._method("list", Action.GET, self.list)
+        self._method("set", Action.CREATE, self.set)
+
 
     @staticmethod
     def create(context: Context, pattern_id: str) -> None:

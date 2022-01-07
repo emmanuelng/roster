@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from app.Context import Context
 from app.Resource import Resource
 from app.errors.MethodNotFoundError import MethodNotFoundError
+from app.resources.Patterns import Patterns
 from app.resources.Persons import Persons
 from app.resources.Rosters import Rosters
 from dataset.Dataset import Dataset
@@ -26,6 +27,7 @@ class App(ABC):
         self.__resources = {}
 
         # Resources
+        self._resource("patterns", Patterns())
         self._resource("persons", Persons())
         self._resource("rosters", Rosters())
 
