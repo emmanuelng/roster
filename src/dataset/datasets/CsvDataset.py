@@ -5,10 +5,10 @@ from dataset.dataclasses.Absence import Absence
 from dataset.dataclasses.Pattern import Pattern
 from dataset.dataclasses.Person import Person
 from dataset.dataclasses.Roster import Roster
-from dataset.datasets.ArrayDataset import ArrayDataset
+from dataset.datasets.ListDataset import ListDataset
 
 
-class CsvDataset(ArrayDataset):
+class CsvDataset(ListDataset):
     """
     A dataset that stores the data in JSON files.
     """

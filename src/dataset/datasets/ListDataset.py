@@ -5,12 +5,13 @@ from dataset.dataclasses.Absence import Absence
 from dataset.dataclasses.Pattern import Pattern
 from dataset.dataclasses.Person import Person
 from dataset.dataclasses.Roster import Roster
+from dataset.errors.DuplicateKeyError import DuplicateKeyError
 from dataset.errors.ObjectNotFoundError import ObjectNotFoundError
 
 
-class ArrayDataset(Dataset):
+class ListDataset(Dataset):
     """
-    A simple dataset that uses python arrays to store the data.
+    A simple dataset that uses python lists to store the data.
     """
 
     _persons: list[Person]
@@ -33,19 +34,19 @@ class ArrayDataset(Dataset):
 
     def add_pattern(self, pattern: Pattern) -> None:
         if len(self.get_patterns(identifier=pattern.identifier)) > 0:
-            raise Exception("A pattern with the same identifier already exists.")
+            raise DuplicateKeyError()
 
         self._patterns.append(pattern)
 
     def add_person(self, person: Person) -> None:
         if len(self.get_persons(identifier=person.identifier)) > 0:
-            raise Exception("A person with the same identifier already exists.")
+            raise DuplicateKeyError()
 
         self._persons.append(person)
 
     def add_roster(self, roster: Roster) -> None:
         if len(self.get_rosters(sequence_no=roster.sequence_no)) > 0:
-            raise Exception("A roster with the same sequence number already exists.")
+            raise DuplicateKeyError()
 
         self._rosters.append(roster)
 
