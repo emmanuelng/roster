@@ -34,7 +34,7 @@ class Persons(Resource):
         :param last_name: Last name of the new person.
         :return: The newly created person.
         """
-        person = Person(identifier, first_name, last_name)
+        person = Person(identifier=identifier, first_name=first_name, last_name=last_name)
         context.database.add_person(person)
         return person
 
@@ -63,5 +63,10 @@ class Persons(Resource):
     def list(context: Context) -> list[Person]:
         """
         Get the list of persons.
+
+        :param context: The context.
+        :return: The list of all registered persons, sorted by last name / first name.
         """
-        return context.database.get_persons()
+        persons = context.database.get_persons()
+        persons.sort()
+        return persons

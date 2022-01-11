@@ -14,7 +14,12 @@ class TestPersons(TestCase):
         Tests that it is possible to create a new person.
         """
         # Add a person.
-        person = Persons.create(self.context, "test_id", "test_f_name", "test_l_name")
+        person = Persons.create(self.context, "id", "f_name", "l_name")
+
+        # Check that the fields are correctly initialized.
+        self.assertEqual("id", person.identifier)
+        self.assertEqual("f_name", person.first_name)
+        self.assertEqual("l_name", person.last_name)
 
         # Check that the person was added to the database.
         self.assertEqual(1, len(self.database.get_persons()))
@@ -88,11 +93,16 @@ class TestPersons(TestCase):
         """
         self.assertEqual(0, len(Persons.list(self.context)))
 
-        # Add two persons.
-        person1 = Persons.create(self.context, "id1", "person1", "person1")
-        person2 = Persons.create(self.context, "id2", "person2", "person2")
+        # Add three persons.
+        person1 = Persons.create(self.context, "id1", "john", "smith")
+        person2 = Persons.create(self.context, "id2", "abraham", "smith")
+        person3 = Persons.create(self.context, "id3", "john", "albert")
 
-        # Check that the list contains the two persons (order is not guaranteed).
-        self.assertEqual(2, len(Persons.list(self.context)))
-        self.assertIn(person1, Persons.list(self.context))
-        self.assertIn(person2, Persons.list(self.context))
+        # Check that the list contains the three persons.
+        persons = Persons.list(self.context)
+        self.assertEqual(3, len(persons))
+
+        # Check that the persons are sorted by name (last name > first name).
+        self.assertEqual(person3, persons[0], "The persons are not sorted by names.")
+        self.assertEqual(person2, persons[1], "The persons are not sorted by names.")
+        self.assertEqual(person1, persons[2], "The persons are not sorted by names.")

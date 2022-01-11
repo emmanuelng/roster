@@ -1,16 +1,16 @@
 from dataclasses import dataclass, field
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, order=True)
 class Person:
     """
     Represents a person.
     """
 
-    identifier: str = field(repr=False)
-    first_name: str = field(hash=False)
+    identifier: str = field(repr=False, compare=False)
     last_name: str = field(hash=False)
-    roles: list[str] = field(hash=False, default_factory=list)
+    first_name: str = field(hash=False)
+    roles: list[str] = field(hash=False, compare=False, default_factory=list)
 
     @property
     def full_name(self) -> str:
