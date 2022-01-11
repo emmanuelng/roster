@@ -1,8 +1,8 @@
 from typing import Optional
 
-from dataset.dataclasses.Pattern import Pattern
-from dataset.dataclasses.Person import Person
-from dataset.dataclasses.Roster import Roster
+from database.dataclasses.Pattern import Pattern
+from database.dataclasses.Person import Person
+from database.dataclasses.Roster import Roster
 from generator import Generator
 from generator.Algorithm import Algorithm
 from generator.errors.NotEnoughResourcesError import NotEnoughResourcesError
@@ -25,7 +25,7 @@ class SimpleAlgorithm(Algorithm):
     def generate_roster(self, roster_sequence_no: int) -> Roster:
         best_score, best_roster = None, None
 
-        for pattern in self.dataset.get_patterns():
+        for pattern in self.database.get_patterns():
             try:
                 roster = self.__generate_roster_with_pattern(roster_sequence_no, pattern)
                 score = self.roster_score(roster)
@@ -81,7 +81,7 @@ class SimpleAlgorithm(Algorithm):
         :param role: The role
         :return: A list of persons.
         """
-        persons = self.dataset.get_available_persons(roster.sequence_no, role=role)
+        persons = self.database.get_available_persons(roster.sequence_no, role=role)
         persons = list(filter(lambda p: not roster.is_assigned(p), persons))
 
         if len(persons) == 0:

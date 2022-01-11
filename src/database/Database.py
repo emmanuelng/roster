@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from dataset.dataclasses.Absence import Absence
-from dataset.dataclasses.Pattern import Pattern
-from dataset.dataclasses.Person import Person
-from dataset.dataclasses.Roster import Roster
+from database.dataclasses.Absence import Absence
+from database.dataclasses.Pattern import Pattern
+from database.dataclasses.Person import Person
+from database.dataclasses.Roster import Roster
 
 
-class Dataset(ABC):
+class Database(ABC):
     """
     Represents a set of data used by the program. This class is responsible for reading and saving the data.
     """

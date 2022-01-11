@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
-from dataset.Dataset import Dataset
-from dataset.dataclasses.Person import Person
-from dataset.dataclasses.Roster import Roster
+from database.Database import Database
+from database.dataclasses.Person import Person
+from database.dataclasses.Roster import Roster
 from generator import Generator
 
 
@@ -17,11 +17,11 @@ class Algorithm(ABC):
         self.__generator = generator
 
     @property
-    def dataset(self) -> Dataset:
+    def database(self) -> Database:
         """
-        Dataset used by this algorithm.
+        Database used by this algorithm.
         """
-        return self.__generator.dataset
+        return self.__generator.database
 
     def assignment_score(self, roster_sequence_no: int, person: Person, role: str) -> float:
         """

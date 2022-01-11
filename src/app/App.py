@@ -6,7 +6,7 @@ from app.errors.MethodNotFoundError import MethodNotFoundError
 from app.resources.Patterns import Patterns
 from app.resources.Persons import Persons
 from app.resources.Rosters import Rosters
-from dataset.Dataset import Dataset
+from database.Database import Database
 
 
 class App(ABC):
@@ -17,13 +17,13 @@ class App(ABC):
     __context: Context
     __resources: dict[str, Resource]
 
-    def __init__(self, dataset: Dataset) -> None:
+    def __init__(self, database: Database) -> None:
         """
         Constructor.
 
-        :param dataset: Dataset used by the application.
+        :param database: Database used by the application.
         """
-        self.__context = Context(dataset)
+        self.__context = Context(database)
         self.__resources = {}
 
         # Resources

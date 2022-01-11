@@ -2,7 +2,7 @@ from app.Context import Context
 from app.Resource import Resource, Action
 from app.resources.PersonAbsences import PersonAbsences
 from app.resources.Roles import Roles
-from dataset.dataclasses.Person import Person
+from database.dataclasses.Person import Person
 
 
 class Persons(Resource):
@@ -35,7 +35,7 @@ class Persons(Resource):
         :return: The newly created person.
         """
         person = Person(identifier, first_name, last_name)
-        context.dataset.add_person(person)
+        context.database.add_person(person)
         return person
 
     @staticmethod
@@ -46,7 +46,7 @@ class Persons(Resource):
         :param context: The context.
         :param identifier: Identifier of the person.
         """
-        context.dataset.remove_person(identifier)
+        context.database.remove_person(identifier)
 
     @staticmethod
     def get(context: Context, person_id: str) -> Person:
@@ -57,11 +57,11 @@ class Persons(Resource):
         :param person_id: Identifier of the person. An exception is raised if no person with this identifier is found.
         :return: The person with the given identifier.
         """
-        return context.dataset.get_person(person_id)
+        return context.database.get_person(person_id)
 
     @staticmethod
     def list(context: Context) -> list[Person]:
         """
         Get the list of persons.
         """
-        return context.dataset.get_persons()
+        return context.database.get_persons()

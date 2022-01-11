@@ -1,17 +1,17 @@
 from typing import Optional
 
-from dataset.Dataset import Dataset
-from dataset.dataclasses.Absence import Absence
-from dataset.dataclasses.Pattern import Pattern
-from dataset.dataclasses.Person import Person
-from dataset.dataclasses.Roster import Roster
-from dataset.errors.DuplicateKeyError import DuplicateKeyError
-from dataset.errors.ObjectNotFoundError import ObjectNotFoundError
+from database.Database import Database
+from database.dataclasses.Absence import Absence
+from database.dataclasses.Pattern import Pattern
+from database.dataclasses.Person import Person
+from database.dataclasses.Roster import Roster
+from database.errors.DuplicateKeyError import DuplicateKeyError
+from database.errors.ObjectNotFoundError import ObjectNotFoundError
 
 
-class ListDataset(Dataset):
+class ListDataset(Database):
     """
-    A simple dataset that uses python lists to store the data.
+    A simple database that uses python lists to store the data.
     """
 
     _persons: list[Person]

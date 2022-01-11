@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from dataset.dataclasses.Person import Person
+from database.dataclasses.Person import Person
 
 
 class Evaluator(ABC):

@@ -16,8 +16,8 @@ class Assignments(Resource):
         """
         Assign a person to a role.
         """
-        roster = context.dataset.get_roster(int(roster_sequence_no))
-        person = context.dataset.get_person(person_id)
+        roster = context.database.get_roster(int(roster_sequence_no))
+        person = context.database.get_person(person_id)
         roster.assign(person, role)
 
     @staticmethod
@@ -25,5 +25,5 @@ class Assignments(Resource):
         """
         Remove a person from a roster.
         """
-        roster = context.dataset.get_roster(int(roster_sequence_no))
+        roster = context.database.get_roster(int(roster_sequence_no))
         roster.remove_person(person_id)

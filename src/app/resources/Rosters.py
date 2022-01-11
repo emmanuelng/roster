@@ -2,7 +2,7 @@ from app.Context import Context
 from app.Resource import Resource, Action
 from app.resources.Assignments import Assignments
 from configuration.Configuration import Configuration
-from dataset.dataclasses.Roster import Roster
+from database.dataclasses.Roster import Roster
 from generator.Generator import Generator
 
 
@@ -27,21 +27,21 @@ class Rosters(Resource):
         """
         Create a new roster.
         """
-        context.dataset.add_roster(Roster(sequence_no))
+        context.database.add_roster(Roster(sequence_no))
 
     @staticmethod
     def delete(context: Context, sequence_no: str) -> None:
         """
         Remove a roster.
         """
-        context.dataset.remove_roster(int(sequence_no))
+        context.database.remove_roster(int(sequence_no))
 
     @staticmethod
     def generate(context: Context, sequence_no: str) -> Roster:
         """
         Generate a roster.
         """
-        generator = Generator(context.dataset, Configuration())
+        generator = Generator(context.database, Configuration())
         generated_roster = generator.generate_roster(int(sequence_no))
 
         if generated_roster is None:
@@ -55,7 +55,7 @@ class Rosters(Resource):
         Generate and save a roster.
         """
         roster = Rosters.generate(context, sequence_no)
-        context.dataset.add_roster(roster)
+        context.database.add_roster(roster)
         return roster
 
     @staticmethod
@@ -63,11 +63,11 @@ class Rosters(Resource):
         """
         Display the details of a specific roster.
         """
-        return context.dataset.get_roster(int(sequence_no))
+        return context.database.get_roster(int(sequence_no))
 
     @staticmethod
     def list(context: Context) -> list[Roster]:
         """
         Display the list of all rosters.
         """
-        return context.dataset.get_rosters()
+        return context.database.get_rosters()

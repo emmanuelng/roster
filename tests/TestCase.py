@@ -2,8 +2,8 @@ import unittest
 from abc import ABC
 
 from app.Context import Context
-from dataset.Dataset import Dataset
-from dataset.datasets.ListDataset import ListDataset
+from database.Database import Database
+from database.datasets.ListDataset import ListDataset
 
 
 class TestCase(ABC, unittest.TestCase):
@@ -11,7 +11,7 @@ class TestCase(ABC, unittest.TestCase):
     Base test case.
     """
 
-    __dataset: Dataset
+    __dataset: Database
     __context: Context
 
     def __init__(self, method_name='runTest'):
@@ -26,9 +26,9 @@ class TestCase(ABC, unittest.TestCase):
         self.__context = Context(self.__dataset)
 
     @property
-    def dataset(self) -> Dataset:
+    def database(self) -> Database:
         """
-        Instance of the dataset used by the tests.
+        Instance of the database used by the tests.
         """
         return self.__dataset
 

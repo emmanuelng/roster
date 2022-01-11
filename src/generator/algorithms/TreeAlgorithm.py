@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Optional
 
-from dataset.dataclasses.Pattern import Pattern
-from dataset.dataclasses.Person import Person
-from dataset.dataclasses.Roster import Roster
+from database.dataclasses.Pattern import Pattern
+from database.dataclasses.Person import Person
+from database.dataclasses.Roster import Roster
 from generator import Generator
 from generator.Algorithm import Algorithm
 from generator.errors.InvalidParameterError import InvalidParameterError
@@ -37,10 +37,10 @@ class TreeAlgorithm(Algorithm):
             raise InvalidParameterError()
 
     def generate_roster(self, roster_sequence_no: int) -> Roster:
-        persons = self.dataset.get_available_persons(roster_sequence_no)
+        persons = self.database.get_available_persons(roster_sequence_no)
         rosters = []
 
-        for pattern in self.dataset.get_patterns():
+        for pattern in self.database.get_patterns():
             try:
                 root = _AssignmentNode.get_root_node(roster_sequence_no, pattern, persons)
 

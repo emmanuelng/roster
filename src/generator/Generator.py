@@ -1,8 +1,8 @@
 from typing import Optional
 
 from configuration.Configuration import Configuration
-from dataset.Dataset import Dataset
-from dataset.dataclasses.Roster import Roster
+from database.Database import Database
+from database.dataclasses.Roster import Roster
 from generator.Evaluator import Evaluator
 from generator.algorithms.SimpleAlgorithm import SimpleAlgorithm
 from generator.algorithms.TreeAlgorithm import TreeAlgorithm
@@ -16,21 +16,21 @@ class Generator:
     Roster generator.
     """
 
-    __dataset: Dataset
+    __database: Database
     __config: Configuration
 
-    def __init__(self, dataset: Dataset, config: Configuration) -> None:
+    def __init__(self, database: Database, config: Configuration) -> None:
         """
         Constructor.
-        :param dataset: The data used to access the dataset.
+        :param database: The data used to access the database.
         :param config: Configuration of the generator.
         """
-        self.__dataset = dataset
+        self.__database = database
         self.__config = config
 
         self._evaluators = {
-            "alternate_roles": AlternateRolesEvaluator(dataset),
-            "maximize_rest_time": MaximizeRestTimeEvaluator(dataset)
+            "alternate_roles": AlternateRolesEvaluator(database),
+            "maximize_rest_time": MaximizeRestTimeEvaluator(database)
         }
 
         self._algorithms = {
@@ -48,11 +48,11 @@ class Generator:
         return self.__config
 
     @property
-    def dataset(self) -> Dataset:
+    def database(self) -> Database:
         """
-        Dataset used by this generator.
+        Database used by this generator.
         """
-        return self.__dataset
+        return self.__database
 
     @property
     def evaluators(self) -> list[Evaluator]:
@@ -66,7 +66,7 @@ class Generator:
         Generates a roster.
 
         :param sequence_no: Sequence number of the roster. This number indicates the chronological order in relation to
-         the other rosters in the dataset set. For example, the roster with sequence number 1 is considered to be before
+         the other rosters in the database set. For example, the roster with sequence number 1 is considered to be before
          roster 2.
         :return: A roster.
         """

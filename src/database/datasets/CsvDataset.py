@@ -1,16 +1,16 @@
 import csv
 from os import path
 
-from dataset.dataclasses.Absence import Absence
-from dataset.dataclasses.Pattern import Pattern
-from dataset.dataclasses.Person import Person
-from dataset.dataclasses.Roster import Roster
-from dataset.datasets.ListDataset import ListDataset
+from database.dataclasses.Absence import Absence
+from database.dataclasses.Pattern import Pattern
+from database.dataclasses.Person import Person
+from database.dataclasses.Roster import Roster
+from database.datasets.ListDataset import ListDataset
 
 
 class CsvDataset(ListDataset):
     """
-    A dataset that stores the data in JSON files.
+    A database that stores the data in JSON files.
     """
 
     __directory: str
@@ -54,7 +54,7 @@ class CsvDataset(ListDataset):
         # Clear the current list.
         self._patterns.clear()
 
-        # Read the dataset file.
+        # Read the database file.
         rows, nb_rows = self._read_csv_file("patterns.csv")
 
         for row_index in range(nb_rows):
@@ -74,7 +74,7 @@ class CsvDataset(ListDataset):
         # Clear the current list
         self._persons.clear()
 
-        # Read the dataset file.
+        # Read the database file.
         rows, nb_rows = self._read_csv_file("persons.csv")
 
         # Read the lines of each person and build the person objects.
@@ -100,7 +100,7 @@ class CsvDataset(ListDataset):
         # Clear the current list
         self._rosters.clear()
 
-        # Read the dataset file.
+        # Read the database file.
         rows, nb_rows = self._read_csv_file("rosters.csv")
         roster_by_sequence_no = {}
 

@@ -3,7 +3,7 @@ import sys
 from app.App import App
 from app.errors.MethodNotFoundError import MethodNotFoundError
 from app.resources.Configurations import Configurations
-from dataset.datasets.CsvDataset import CsvDataset
+from database.datasets.CsvDataset import CsvDataset
 
 
 class ConsoleApp(App):

@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
-from dataset.dataclasses.Person import Person
+from database.dataclasses.Person import Person
 
 
 @dataclass(order=True)

@@ -1,6 +1,6 @@
 from app.Context import Context
 from app.Resource import Resource, Action
-from dataset.dataclasses.Absence import Absence
+from database.dataclasses.Absence import Absence
 
 
 class PersonAbsences(Resource):
@@ -17,21 +17,21 @@ class PersonAbsences(Resource):
         """
         Add an absence.
         """
-        person = context.dataset.get_person(identifier)
-        context.dataset.add_absence(int(roster_sequence_no), person)
+        person = context.database.get_person(identifier)
+        context.database.add_absence(int(roster_sequence_no), person)
 
     @staticmethod
     def delete(context: Context, person_id: str, roster_sequence_no: str) -> None:
         """
         Remove an absence.
         """
-        person = context.dataset.get_person(person_id)
-        context.dataset.remove_absence(int(roster_sequence_no), person)
+        person = context.database.get_person(person_id)
+        context.database.remove_absence(int(roster_sequence_no), person)
 
     @staticmethod
     def get(context: Context, person_id: str) -> list[Absence]:
         """
         Get the absences of a person.
         """
-        person = context.dataset.get_person(person_id)
-        return context.dataset.get_absences(person=person)
+        person = context.database.get_person(person_id)
+        return context.database.get_absences(person=person)
