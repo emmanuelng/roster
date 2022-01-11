@@ -9,7 +9,7 @@ from database.errors.DuplicateKeyError import DuplicateKeyError
 from database.errors.ObjectNotFoundError import ObjectNotFoundError
 
 
-class ListDataset(Database):
+class ListDatabase(Database):
     """
     A simple database that uses python lists to store the data.
     """

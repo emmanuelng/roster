@@ -1,14 +1,14 @@
 import csv
 from os import path
 
+from database.databases import ListDatabase
 from database.dataclasses.Absence import Absence
 from database.dataclasses.Pattern import Pattern
 from database.dataclasses.Person import Person
 from database.dataclasses.Roster import Roster
-from database.datasets.ListDataset import ListDataset
 
 
-class CsvDataset(ListDataset):
+class CsvDatabase(ListDatabase):
     """
     A database that stores the data in JSON files.
     """

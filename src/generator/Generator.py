@@ -66,8 +66,8 @@ class Generator:
         Generates a roster.
 
         :param sequence_no: Sequence number of the roster. This number indicates the chronological order in relation to
-         the other rosters in the database set. For example, the roster with sequence number 1 is considered to be before
-         roster 2.
+         the other rosters in the database set. For example, the roster with sequence number 1 is considered to be
+         before roster 2.
         :return: A roster.
         """
         algorithm_name = self.__config.get("algorithm", "tree_fast")

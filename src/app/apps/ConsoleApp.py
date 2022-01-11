@@ -3,7 +3,7 @@ import sys
 from app.App import App
 from app.errors.MethodNotFoundError import MethodNotFoundError
 from app.resources.Configurations import Configurations
-from database.datasets.CsvDataset import CsvDataset
+from database.databases.CsvDatabase import CsvDatabase
 
 
 class ConsoleApp(App):
@@ -12,7 +12,7 @@ class ConsoleApp(App):
     """
 
     def __init__(self):
-        super().__init__(CsvDataset())
+        super().__init__(CsvDatabase())
 
         # Resources
         self._resource("config", Configurations())

@@ -3,7 +3,7 @@ from abc import ABC
 
 from app.Context import Context
 from database.Database import Database
-from database.datasets.ListDataset import ListDataset
+from database.databases.ListDatabase import ListDatabase
 
 
 class TestCase(ABC, unittest.TestCase):
@@ -22,7 +22,7 @@ class TestCase(ABC, unittest.TestCase):
         """
         super().__init__(method_name)
 
-        self.__dataset = ListDataset()
+        self.__dataset = ListDatabase()
         self.__context = Context(self.__dataset)
 
     @property
