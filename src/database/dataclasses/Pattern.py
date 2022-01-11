@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 
 
-@dataclass
+@dataclass(order=True)
 class Pattern:
     """
     Roster pattern. Represents a pattern that can be used to generate a roster. A pattern defines the roles that are
@@ -9,8 +9,11 @@ class Pattern:
     """
 
     identifier: str
-    assignments: dict[str, int] = field(default_factory=dict)
+    assignments: dict[str, int] = field(compare=False, default_factory=dict)
 
     @property
     def roles(self) -> list[str]:
+        """
+        Pattern roles.
+        """
         return self.assignments.keys()
