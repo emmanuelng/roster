@@ -8,6 +8,7 @@ class PersonAbsences(Resource):
     def __init__(self) -> None:
         super().__init__()
 
+        # Methods
         self._method("add", Action.CREATE, self.add)
         self._method("delete", Action.DELETE, self.delete)
         self._method("get", Action.GET, self.get)

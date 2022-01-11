@@ -1,7 +1,7 @@
 from app.Context import Context
 from app.Resource import Resource, Action
 from app.resources.PersonAbsences import PersonAbsences
-from app.resources.Roles import Roles
+from app.resources.PersonRoles import PersonRoles
 from database.dataclasses.Person import Person
 
 
@@ -14,7 +14,7 @@ class Persons(Resource):
         super().__init__()
 
         # Child resources
-        self._child_resource("roles", Roles())
+        self._child_resource("roles", PersonRoles())
         self._child_resource("absences", PersonAbsences())
 
         # Methods

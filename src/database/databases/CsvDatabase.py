@@ -1,7 +1,7 @@
 import csv
 from os import path
 
-from database.databases import ListDatabase
+from database.databases.ListDatabase import ListDatabase
 from database.dataclasses.Absence import Absence
 from database.dataclasses.Pattern import Pattern
 from database.dataclasses.Person import Person

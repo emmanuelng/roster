@@ -1,6 +1,8 @@
 from app.Context import Context
 from app.Resource import Resource, Action
-from app.resources.Assignments import Assignments
+
+from app.resources.RosterAbsences import RosterAbsences
+from app.resources.RosterAssignments import RosterAssignments
 from configuration.Configuration import Configuration
 from database.dataclasses.Roster import Roster
 from generator.Generator import Generator
@@ -12,7 +14,8 @@ class Rosters(Resource):
         super().__init__()
 
         # Child resources
-        self._child_resource("assignments", Assignments())
+        self._child_resource("absences", RosterAbsences())
+        self._child_resource("assignments", RosterAssignments())
 
         # Methods
         self._method("create", Action.CREATE, self.create)

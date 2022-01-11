@@ -1,33 +1,35 @@
-import dataclasses
-
 from app.Context import Context
 from app.Resource import Resource, Action
 
 
 class Roles(Resource):
 
-    def __init__(self) -> None:
+    def __init__(self):
+        """
+        Constructor.
+        """
         super().__init__()
 
         # Methods
-        self._method("add", Action.UPDATE, self.add)
         self._method("get", Action.GET, self.get)
 
     @staticmethod
-    def add(context: Context, person_id: str, role: str) -> None:
+    def get(context: Context) -> list[str]:
         """
-        Add a role to a person.
-        """
-        person = context.database.get_person(person_id)
-        if person is None or person.has_role(role):
-            return
+        Get the list of all roles.
 
-        context.database.remove_person(person_id)
-        context.database.add_person(dataclasses.replace(person, roles=person.roles + [role]))
+        :param context: The context.
+        :return: A sorted list of roles.
+        """
+        roles = []
 
-    @staticmethod
-    def get(context: Context, person_id: str) -> list[str]:
-        """
-        Get the roles of a person.
-        """
-        return context.database.get_person(person_id).roles
+        for pattern in context.database.get_patterns():
+            roles += pattern.roles
+
+        for person in context.database.get_persons():
+            roles += person.roles
+
+        roles = list(set(roles))
+        roles.sort()
+
+        return roles

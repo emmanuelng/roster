@@ -2,7 +2,7 @@ from app.Context import Context
 from app.Resource import Resource, Action
 
 
-class Assignments(Resource):
+class RosterAssignments(Resource):
 
     def __init__(self) -> None:
         super().__init__()
