@@ -28,9 +28,10 @@ class ListDatabase(Database):
         self._rosters = []
         self._absences = []
 
-    def add_absence(self, roster_sequence_no: int, person: Person):
-        if len(self.get_absences(roster_sequence_no=roster_sequence_no, person=person)) == 0:
-            self._absences.append(Absence(person.identifier, roster_sequence_no))
+    def add_absence(self, absence: Absence) -> None:
+        person = self.get_person(absence.person_identifier)
+        if not self.get_absences(roster_sequence_no=absence.roster_sequence_no, person=person):
+            self._absences.append(absence)
 
     def add_pattern(self, pattern: Pattern) -> None:
         if len(self.get_patterns(identifier=pattern.identifier)) > 0:
@@ -124,10 +125,10 @@ class ListDatabase(Database):
         return list(rosters)
 
     def remove_absence(self, roster_sequence_no: int, person: Person) -> None:
-        self._absences = filter(
-            lambda a: a.roster_sequence_no != roster_sequence_no and a.person_identifier != person.identifier,
+        self._absences = list(filter(
+            lambda a: a.roster_sequence_no != roster_sequence_no or a.person_identifier != person.identifier,
             self._absences
-        )
+        ))
 
     def remove_pattern(self, identifier: str) -> None:
         self._patterns = list(filter(lambda p: p.identifier != identifier, self._patterns))

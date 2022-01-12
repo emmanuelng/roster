@@ -13,12 +13,11 @@ class Database(ABC):
     """
 
     @abstractmethod
-    def add_absence(self, roster_sequence_no: int, person: Person):
+    def add_absence(self, absence: Absence) -> None:
         """
         Adds an absence.
 
-        :param roster_sequence_no: Sequence number of the roster in which the person will be absent.
-        :param person: The absent person.
+        :param absence: Absence to add.
         """
         pass
 
