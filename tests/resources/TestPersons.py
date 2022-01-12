@@ -5,9 +5,6 @@ from database.errors.ObjectNotFoundError import ObjectNotFoundError
 
 
 class TestPersons(TestCase):
-    """
-    Persons resource tests.
-    """
 
     def test_create_success(self):
         """
