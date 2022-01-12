@@ -76,10 +76,13 @@ class Patterns(Resource):
         :param role: Role to set.
         :param number: Number of persons required for the role.
         """
-        if not role:
-            raise InvalidArgumentError("role")
-
         try:
+            if not role:
+                raise InvalidArgumentError("role")
+
+            if int(number) <= 0:
+                raise InvalidArgumentError("number")
+
             pattern = context.database.get_pattern(pattern_id)
             pattern.assignments[role] = int(number)
         except ValueError:
