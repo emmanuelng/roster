@@ -53,7 +53,7 @@ class TestPatterns(TestCase):
 
     def test_delete_success_unknown_id(self):
         """
-        Tests that it is possible to provide an unknown identifier without any error.
+        Tests that it is possible to provide an unknown person_id without any error.
         """
         # Add a pattern.
         Patterns.create(self.context, "test_id")
@@ -75,7 +75,7 @@ class TestPatterns(TestCase):
 
     def test_get_error_unknown_id(self):
         """
-        Tests that the get method raises an exception when an unknown identifier is provided.
+        Tests that the get method raises an exception when an unknown person_id is provided.
         """
         with self.assertRaises(ObjectNotFoundError):
             Patterns.get(self.context, "xyz")
@@ -160,10 +160,22 @@ class TestPatterns(TestCase):
         """
         Patterns.create(self.context, "id")
 
-        # Non-numeric values.
+        # Non-numeric value.
         with self.assertRaises(InvalidArgumentError):
             Patterns.set(self.context, "id", "role", "abc")
 
-        # Empty values.
+        # Empty value.
         with self.assertRaises(InvalidArgumentError):
             Patterns.set(self.context, "id", "role", "")
+
+        # Zero.
+        with self.assertRaises(InvalidArgumentError):
+            Patterns.set(self.context, "id", "role", "0")
+
+        # Negative value.
+        with self.assertRaises(InvalidArgumentError):
+            Patterns.set(self.context, "id", "role", "-1")
+
+        # Check that no assignment was saved.
+        pattern = Patterns.get(self.context, "id")
+        self.assertEqual({}, pattern.assignments)
