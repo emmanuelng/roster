@@ -21,15 +21,10 @@ class Roles(Resource):
         :param context: The context.
         :return: A sorted list of roles.
         """
-        roles = []
+        roles = [pattern.roles for pattern in context.database.get_patterns()] + \
+                [person.roles for person in context.database.get_persons()]
 
-        for pattern in context.database.get_patterns():
-            roles += pattern.roles
-
-        for person in context.database.get_persons():
-            roles += person.roles
-
-        roles = list(set(roles))
+        roles = list(set([item for sublist in roles for item in sublist]))
         roles.sort()
 
         return roles

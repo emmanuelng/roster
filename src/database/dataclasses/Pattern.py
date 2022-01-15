@@ -16,4 +16,4 @@ class Pattern:
         """
         Pattern roles.
         """
-        return self.assignments.keys()
+        return list(self.assignments.keys())
