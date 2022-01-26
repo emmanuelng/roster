@@ -18,8 +18,8 @@ class TestPatterns(TestCase):
         self.assertEqual("id", pattern.identifier)
 
         # Check that the pattern was added to the database.
-        self.assertEqual(1, len(self.database.get_patterns()))
-        self.assertEqual(pattern, self.database.get_patterns()[0])
+        self.assertEqual(1, len(Patterns.list(self.context)))
+        self.assertEqual(pattern, Patterns.list(self.context)[0])
 
     def test_create_error_duplicate_identifiers(self):
         """
@@ -27,15 +27,15 @@ class TestPatterns(TestCase):
         """
         # Add a pattern to the database.
         pattern = Patterns.create(self.context, "test_id")
-        self.assertEqual(1, len(self.database.get_patterns()))
+        self.assertEqual(1, len(Patterns.list(self.context)))
 
         # Try to add another pattern with the same id. An exception must be raised.
         with self.assertRaises(DuplicateKeyError):
             Patterns.create(self.context, "test_id")
 
         # Check that only the first pattern is in the database.
-        self.assertEqual(1, len(self.database.get_patterns()))
-        self.assertEqual(pattern, self.database.get_patterns()[0])
+        self.assertEqual(1, len(Patterns.list(self.context)))
+        self.assertEqual(pattern, Patterns.list(self.context)[0])
 
     def test_delete_success(self):
         """
@@ -44,12 +44,12 @@ class TestPatterns(TestCase):
         # Add two patterns.
         pattern1 = Patterns.create(self.context, "id1")
         pattern2 = Patterns.create(self.context, "id2")
-        self.assertEqual(2, len(self.database.get_patterns()))
+        self.assertEqual(2, len(Patterns.list(self.context)))
 
         # Delete one pattern.
         Patterns.delete(self.context, pattern1.identifier)
-        self.assertEqual(1, len(self.database.get_patterns()))
-        self.assertEqual(pattern2, self.database.get_patterns()[0])
+        self.assertEqual(1, len(Patterns.list(self.context)))
+        self.assertEqual(pattern2, Patterns.list(self.context)[0])
 
     def test_delete_success_unknown_id(self):
         """
@@ -57,14 +57,14 @@ class TestPatterns(TestCase):
         """
         # Add a pattern.
         Patterns.create(self.context, "test_id")
-        self.assertEqual(1, len(self.database.get_patterns()))
+        self.assertEqual(1, len(Patterns.list(self.context)))
 
         # Invoke the delete method with invalid identifiers.
         Patterns.delete(self.context, "xyz")
         Patterns.delete(self.context, None)
 
         # Check that no pattern was deleted.
-        self.assertEqual(1, len(self.database.get_patterns()))
+        self.assertEqual(1, len(Patterns.list(self.context)))
 
     def test_get_success(self):
         """

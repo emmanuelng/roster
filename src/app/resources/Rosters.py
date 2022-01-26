@@ -1,6 +1,8 @@
+from typing import Union
+
 from app.Context import Context
 from app.Resource import Resource, Action
-
+from app.errors.InvalidArgumentError import InvalidArgumentError
 from app.resources.RosterAbsences import RosterAbsences
 from app.resources.RosterAssignments import RosterAssignments
 from configuration.Configuration import Configuration
@@ -11,6 +13,9 @@ from generator.Generator import Generator
 class Rosters(Resource):
 
     def __init__(self) -> None:
+        """
+        Constructor.
+        """
         super().__init__()
 
         # Child resources
@@ -21,56 +26,78 @@ class Rosters(Resource):
         self._method("create", Action.CREATE, self.create)
         self._method("delete", Action.DELETE, self.delete)
         self._method("test", Action.CREATE, self.generate)
-        self._method("generate", Action.CREATE, self.generate_and_save)
         self._method("get", Action.GET, self.get)
         self._method("list", Action.GET, self.list)
 
     @staticmethod
-    def create(context: Context, sequence_no: str) -> None:
+    def create(context: Context, sequence_no: Union[int, str]) -> Roster:
         """
         Create a new roster.
+
+        :param context: The context.
+        :param sequence_no: Sequence number of the roster.
+        :return: The newly created roster.
         """
-        context.database.add_roster(Roster(sequence_no))
+        try:
+            roster = Roster(int(sequence_no))
+            context.database.add_roster(roster)
+            return roster
+        except ValueError:
+            raise InvalidArgumentError("sequence_no")
 
     @staticmethod
-    def delete(context: Context, sequence_no: str) -> None:
+    def delete(context: Context, sequence_no: Union[int, str]) -> None:
         """
         Remove a roster.
+
+        :param context: The context.
+        :param sequence_no: Sequence number of the roster to delete.
         """
-        context.database.remove_roster(int(sequence_no))
+        try:
+            context.database.remove_roster(int(sequence_no))
+        except ValueError:
+            raise InvalidArgumentError("sequence_no")
 
     @staticmethod
-    def generate(context: Context, sequence_no: str) -> Roster:
+    def generate(context: Context, sequence_no: Union[int, str]) -> Roster:
         """
         Generate a roster.
-        """
-        generator = Generator(context.database, Configuration())
-        generated_roster = generator.generate_roster(int(sequence_no))
 
-        if generated_roster is None:
-            raise Exception("Could not generate a roster.")
-
-        return generated_roster
-
-    @staticmethod
-    def generate_and_save(context: Context, sequence_no: str) -> Roster:
+        :param context: The context.
+        :param sequence_no: Sequence number of the roster to generate.
+        :return: The generated roster.
         """
-        Generate and save a roster.
-        """
-        roster = Rosters.generate(context, sequence_no)
-        context.database.add_roster(roster)
-        return roster
+        try:
+            generator = Generator(context.database, Configuration())
+            roster = generator.generate_roster(int(sequence_no))
+            context.database.add_roster(roster)
+            return roster
+        except ValueError:
+            raise InvalidArgumentError("sequence_no")
 
     @staticmethod
-    def get(context: Context, sequence_no: str) -> list[Roster]:
+    def get(context: Context, sequence_no: Union[int, str]) -> Roster:
         """
-        Display the details of a specific roster.
+        Get a roster.
+
+        :param context: The context.
+        :param sequence_no: Sequence number of the roster. Throws an exception if no roster with this sequence number
+         is found.
+        :return: The roster with the given sequence number.
         """
-        return context.database.get_roster(int(sequence_no))
+        try:
+            return context.database.get_roster(int(sequence_no))
+        except ValueError:
+            raise InvalidArgumentError("sequence_no")
 
     @staticmethod
     def list(context: Context) -> list[Roster]:
         """
-        Display the list of all rosters.
+        Get the list of all rosters.
+
+        :param context: The context.
+        :return: List of rosters.
         """
-        return context.database.get_rosters()
+        rosters = context.database.get_rosters()
+        rosters.sort()
+        return rosters

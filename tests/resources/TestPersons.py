@@ -19,8 +19,8 @@ class TestPersons(TestCase):
         self.assertEqual("l_name", person.last_name)
 
         # Check that the person was added to the database.
-        self.assertEqual(1, len(self.database.get_persons()))
-        self.assertEqual(person, self.database.get_persons()[0])
+        self.assertEqual(1, len(Persons.list(self.context)))
+        self.assertEqual(person, Persons.list(self.context)[0])
 
     def test_create_error_duplicate_identifiers(self):
         """
@@ -28,15 +28,15 @@ class TestPersons(TestCase):
         """
         # Add a person to the database.
         person = Persons.create(self.context, "test_id", "person_1", "person_1")
-        self.assertEqual(1, len(self.database.get_persons()))
+        self.assertEqual(1, len(Persons.list(self.context)))
 
         # Try to add another person with the same id. An exception must be raised.
         with self.assertRaises(DuplicateKeyError):
             Persons.create(self.context, "test_id", "person_2", "person_2")
 
         # Check that only the first person is in the database.
-        self.assertEqual(1, len(self.database.get_persons()))
-        self.assertEqual(person, self.database.get_persons()[0])
+        self.assertEqual(1, len(Persons.list(self.context)))
+        self.assertEqual(person, Persons.list(self.context)[0])
 
     def test_delete_success(self):
         """
@@ -45,12 +45,12 @@ class TestPersons(TestCase):
         # Add two person.
         person1 = Persons.create(self.context, "id1", "test_f_name", "test_l_name")
         person2 = Persons.create(self.context, "id2", "test_f_name", "test_l_name")
-        self.assertEqual(2, len(self.database.get_persons()))
+        self.assertEqual(2, len(Persons.list(self.context)))
 
         # Delete the person.
         Persons.delete(self.context, person1.identifier)
-        self.assertEqual(1, len(self.database.get_persons()))
-        self.assertEqual(person2, self.database.get_persons()[0])
+        self.assertEqual(1, len(Persons.list(self.context)))
+        self.assertEqual(person2, Persons.list(self.context)[0])
 
     def test_delete_success_unknown_id(self):
         """
@@ -58,14 +58,14 @@ class TestPersons(TestCase):
         """
         # Add a person
         Persons.create(self.context, "test_id", "person_1", "person_1")
-        self.assertEqual(1, len(self.database.get_persons()))
+        self.assertEqual(1, len(Persons.list(self.context)))
 
         # Invoke the delete method with invalid identifiers.
         Persons.delete(self.context, "xyz")
         Persons.delete(self.context, None)
 
         # Check that no person was deleted.
-        self.assertEqual(1, len(self.database.get_persons()))
+        self.assertEqual(1, len(Persons.list(self.context)))
 
     def test_get_success(self):
         """

@@ -33,8 +33,8 @@ class Roster:
         :param person: The person.
         :return: The role or None if the person is not scheduled.
         """
-        assignment_tuple = next(a for a in self.assignments.items() if a[0].identifier == person.identifier)
-        return assignment_tuple[1] if assignment_tuple is not None else None
+        person_assignments = [a for a in self.assignments.items() if a[0].identifier == person.identifier]
+        return person_assignments[0][1] if person_assignments else None
 
     def is_assigned(self, person: Person, role: str = None) -> bool:
         """

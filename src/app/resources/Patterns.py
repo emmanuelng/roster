@@ -1,3 +1,5 @@
+from typing import Union
+
 from app.Context import Context
 from app.Resource import Resource, Action
 from app.errors.InvalidArgumentError import InvalidArgumentError
@@ -67,7 +69,7 @@ class Patterns(Resource):
         return patterns
 
     @staticmethod
-    def set(context: Context, pattern_id: str, role: str, number: str) -> None:
+    def set(context: Context, pattern_id: str, role: str, number: Union[int, str]) -> None:
         """
         Set an assignment of a pattern.
 

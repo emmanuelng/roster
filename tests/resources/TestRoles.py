@@ -23,4 +23,3 @@ class TestRoles(TestCase):
         Patterns.set(self.context, "pattern", "roleA", "1")
         Patterns.set(self.context, "pattern", "roleB", "1")
         self.assertEqual(["roleA", "roleB"], Roles.get(self.context))
-
