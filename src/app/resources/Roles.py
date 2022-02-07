@@ -1,5 +1,7 @@
 from app.Context import Context
 from app.Resource import Resource, Action
+from database.dataclass.Pattern import Pattern
+from database.dataclass.Person import Person
 
 
 class Roles(Resource):
@@ -21,8 +23,8 @@ class Roles(Resource):
         :param context: The context.
         :return: A sorted list of roles.
         """
-        roles = [pattern.roles for pattern in context.database.get_patterns()] + \
-                [person.roles for person in context.database.get_persons()]
+        roles = [pattern.roles for pattern in context.database.get(Pattern)] + \
+                [person.roles for person in context.database.get(Person)]
 
         roles = list(set([item for sublist in roles for item in sublist]))
         roles.sort()

@@ -3,7 +3,8 @@ from typing import Union
 from app.Context import Context
 from app.Resource import Resource, Action
 from app.errors.InvalidArgumentError import InvalidArgumentError
-from database.dataclasses.Absence import Absence
+from database.dataclass.Absence import Absence
+from database.dataclass.Person import Person
 
 
 class PersonAbsences(Resource):
@@ -30,9 +31,10 @@ class PersonAbsences(Resource):
         :return: The newly created absence.
         """
         try:
-            absence = Absence(roster_sequence_no=int(roster_sequence_no), person_identifier=person_id)
-            context.database.add_absence(absence)
-            return absence
+            person = context.database.get_unique(Person, identifier=person_id)
+            return context.database.create(Absence,
+                                           roster_sequence_no=int(roster_sequence_no),
+                                           person_identifier=person.identifier)
         except ValueError:
             raise InvalidArgumentError("roster_sequence_no")
 
@@ -45,8 +47,8 @@ class PersonAbsences(Resource):
         :param person_id: Identifier of the person.
         :param roster_sequence_no: Sequence number of the roster.
         """
-        person = context.database.get_person(person_id)
-        context.database.remove_absence(int(roster_sequence_no), person)
+        context.database.get_unique(Person, identifier=person_id)
+        context.database.delete(Absence, roster_sequence_no=int(roster_sequence_no), person_identifier=person_id)
 
     @staticmethod
     def list(context: Context, person_id: str) -> list[Absence]:
@@ -57,7 +59,7 @@ class PersonAbsences(Resource):
         :param person_id: Identifier of the person.
         :return: A list of absences, sorted by roster sequence number.
         """
-        person = context.database.get_person(person_id)
-        absences = context.database.get_absences(person=person)
-        absences.sort()
+        person = context.database.get_unique(Person, identifier=person_id)
+        absences = context.database.get(Absence, person_identifier=person.identifier)
+        absences.sort(key=lambda a: a.roster_sequence_no)
         return absences

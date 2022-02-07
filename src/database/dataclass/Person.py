@@ -1,16 +1,15 @@
-from dataclasses import dataclass, field
+from database.Dataclass import Dataclass, Field
 
 
-@dataclass(frozen=True, order=True)
-class Person:
+class Person(Dataclass):
     """
     Represents a person.
     """
 
-    identifier: str = field(repr=False, compare=False)
-    last_name: str = field(hash=False)
-    first_name: str = field(hash=False)
-    roles: list[str] = field(hash=False, compare=False, default_factory=list)
+    identifier: str
+    last_name: str = Field(key=False)
+    first_name: str = Field(key=False)
+    roles: list[str] = Field(key=False, default_factory=list)
 
     @property
     def full_name(self) -> str:

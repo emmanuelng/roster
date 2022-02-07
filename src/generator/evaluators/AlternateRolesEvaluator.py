@@ -1,5 +1,6 @@
 from database.Database import Database
-from database.dataclasses.Person import Person
+from database.dataclass.Person import Person
+from database.dataclass.Roster import Roster
 from generator.Evaluator import Evaluator
 
 
@@ -20,7 +21,8 @@ class AlternateRolesEvaluator(Evaluator):
         self.__database = database
 
     def assignment_score(self, roster_sequence_no: int, person: Person, role: str) -> float:
-        past_rosters = self.__database.get_rosters(before=roster_sequence_no)
+        all_rosters = self.__database.get(Roster)
+        past_rosters = filter(lambda r: r.sequence_no < roster_sequence_no, all_rosters)
         sorted_rosters = sorted(past_rosters, key=lambda r: r.sequence_no, reverse=True)
 
         for i, roster in enumerate(sorted_rosters):

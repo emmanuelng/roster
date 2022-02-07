@@ -6,7 +6,7 @@ from app.errors.InvalidArgumentError import InvalidArgumentError
 from app.resources.RosterAbsences import RosterAbsences
 from app.resources.RosterAssignments import RosterAssignments
 from configuration.Configuration import Configuration
-from database.dataclasses.Roster import Roster
+from database.dataclass.Roster import Roster
 from generator.Generator import Generator
 
 
@@ -39,9 +39,7 @@ class Rosters(Resource):
         :return: The newly created roster.
         """
         try:
-            roster = Roster(int(sequence_no))
-            context.database.add_roster(roster)
-            return roster
+            return context.database.create(Roster, sequence_no=int(sequence_no))
         except ValueError:
             raise InvalidArgumentError("sequence_no")
 
@@ -54,7 +52,7 @@ class Rosters(Resource):
         :param sequence_no: Sequence number of the roster to delete.
         """
         try:
-            context.database.remove_roster(int(sequence_no))
+            context.database.delete(Roster, sequence_no=int(sequence_no))
         except ValueError:
             raise InvalidArgumentError("sequence_no")
 
@@ -68,10 +66,8 @@ class Rosters(Resource):
         :return: The generated roster.
         """
         try:
-            generator = Generator(context.database, Configuration())
-            roster = generator.generate_roster(int(sequence_no))
-            context.database.add_roster(roster)
-            return roster
+            roster = Generator(context.database, Configuration()).generate_roster(int(sequence_no))
+            return context.database.create(Roster, sequence_no=roster.sequence_no, assignments=roster.assignments)
         except ValueError:
             raise InvalidArgumentError("sequence_no")
 
@@ -86,7 +82,7 @@ class Rosters(Resource):
         :return: The roster with the given sequence number.
         """
         try:
-            return context.database.get_roster(int(sequence_no))
+            return context.database.get_unique(Roster, sequence_no=int(sequence_no))
         except ValueError:
             raise InvalidArgumentError("sequence_no")
 
@@ -98,6 +94,6 @@ class Rosters(Resource):
         :param context: The context.
         :return: List of rosters.
         """
-        rosters = context.database.get_rosters()
-        rosters.sort()
+        rosters = context.database.get(Roster)
+        rosters.sort(key=lambda r: r.sequence_no)
         return rosters

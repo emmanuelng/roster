@@ -2,7 +2,7 @@ from app.Context import Context
 from app.Resource import Resource, Action
 from app.resources.PersonAbsences import PersonAbsences
 from app.resources.PersonRoles import PersonRoles
-from database.dataclasses.Person import Person
+from database.dataclass.Person import Person
 
 
 class Persons(Resource):
@@ -34,9 +34,7 @@ class Persons(Resource):
         :param last_name: Last name of the new person.
         :return: The newly created person.
         """
-        person = Person(identifier=identifier, first_name=first_name, last_name=last_name)
-        context.database.add_person(person)
-        return person
+        return context.database.create(Person, identifier=identifier, first_name=first_name, last_name=last_name)
 
     @staticmethod
     def delete(context: Context, identifier: str) -> None:
@@ -46,7 +44,7 @@ class Persons(Resource):
         :param context: The context.
         :param identifier: Identifier of the person.
         """
-        context.database.remove_person(identifier)
+        context.database.delete(Person, identifier=identifier)
 
     @staticmethod
     def get(context: Context, person_id: str) -> Person:
@@ -57,7 +55,7 @@ class Persons(Resource):
         :param person_id: Identifier of the person. An exception is raised if no person with this identifier is found.
         :return: The person with the given identifier.
         """
-        return context.database.get_person(person_id)
+        return context.database.get_unique(Person, identifier=person_id)
 
     @staticmethod
     def list(context: Context) -> list[Person]:
@@ -67,6 +65,6 @@ class Persons(Resource):
         :param context: The context.
         :return: The list of all registered persons, sorted by last name / first name.
         """
-        persons = context.database.get_persons()
-        persons.sort()
+        persons = context.database.get(Person)
+        persons.sort(key=lambda p: f"{p.last_name, p.first_name}")
         return persons

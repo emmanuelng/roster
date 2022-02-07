@@ -1,30 +1,23 @@
-from dataclasses import dataclass, field
 from typing import Optional
 
-from database.dataclasses.Person import Person
+from database.Dataclass import Dataclass, Field
+from database.dataclass.Person import Person
 
 
-@dataclass(order=True)
-class Roster:
+class Roster(Dataclass):
     """
     Represents a roster. A roster indicates which persons are assigned for which roles at a given date.
     """
 
     sequence_no: int
-    assignments: dict[Person, str] = field(default_factory=dict, compare=False)
+    assignments: dict[str, str] = Field(key=False, default_factory=dict)
 
     @property
     def persons(self) -> list[Person]:
+        """
+        List of persons assigned in this roster.
+        """
         return list(self.assignments.keys())
-
-    def assign(self, person: Person, role: str) -> None:
-        """
-        Assigns a person to a role.
-
-        :param person: The person.
-        :param role: The role.
-        """
-        self.assignments[person] = role
 
     def get_role(self, person: Person) -> Optional[str]:
         """
@@ -33,7 +26,7 @@ class Roster:
         :param person: The person.
         :return: The role or None if the person is not scheduled.
         """
-        person_assignments = [a for a in self.assignments.items() if a[0].identifier == person.identifier]
+        person_assignments = [a for a in self.assignments.items() if a[0] == person.identifier]
         return person_assignments[0][1] if person_assignments else None
 
     def is_assigned(self, person: Person, role: str = None) -> bool:
@@ -46,11 +39,3 @@ class Roster:
         """
         role_assigned = self.get_role(person)
         return role_assigned == role if role is not None else role_assigned is not None
-
-    def remove_person(self, person: Person) -> None:
-        """
-        Removes a person from the roster.
-
-        :param person: Person to remove.
-        """
-        self.assignments.pop(person)

@@ -1,6 +1,6 @@
 from app.Context import Context
 from app.Resource import Resource, Action
-from database.dataclasses.Absence import Absence
+from database.dataclass.Absence import Absence
 
 
 class RosterAbsences(Resource):
@@ -16,4 +16,4 @@ class RosterAbsences(Resource):
         """
         Get the absences of a roster.
         """
-        return context.database.get_absences(roster_sequence_no=int(roster_sequence_no))
+        return context.database.get(Absence, roster_sequence_no=int(roster_sequence_no))

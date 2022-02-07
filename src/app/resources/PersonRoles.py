@@ -1,8 +1,7 @@
-import dataclasses
-
 from app.Context import Context
 from app.Resource import Resource, Action
 from app.errors.InvalidArgumentError import InvalidArgumentError
+from database.dataclass.Person import Person
 
 
 class PersonRoles(Resource):
@@ -30,12 +29,9 @@ class PersonRoles(Resource):
         if not role:
             raise InvalidArgumentError("role")
 
-        person = context.database.get_person(person_id)
-        if person is None or person.has_role(role):
-            return
-
-        context.database.remove_person(person_id)
-        context.database.add_person(dataclasses.replace(person, roles=person.roles + [role]))
+        person = context.database.get_unique(Person, identifier=person_id)
+        if person is not None and not person.has_role(role):
+            context.database.update(person, roles=person.roles + [role])
 
     @staticmethod
     def get(context: Context, person_id: str) -> list[str]:
@@ -46,7 +42,7 @@ class PersonRoles(Resource):
         :param person_id: Identifier of the person.
         :return: A list of roles.
         """
-        roles = context.database.get_person(person_id).roles
+        roles = context.database.get_unique(Person, identifier=person_id).roles
         roles.sort()
         return roles
 
@@ -62,9 +58,9 @@ class PersonRoles(Resource):
         if not role:
             raise InvalidArgumentError("role")
 
-        person = context.database.get_person(person_id)
-        if person is None or not person.has_role(role):
+        person = context.database.get_unique(Person, identifier=person_id)
+        if not person.has_role(role):
             return
 
-        context.database.remove_person(person_id)
-        context.database.add_person(dataclasses.replace(person, roles=list(filter(lambda r: r != role, person.roles))))
+        updated_roles = list(filter(lambda r: r != role, person.roles))
+        context.database.update(person, roles=updated_roles)

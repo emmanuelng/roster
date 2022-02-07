@@ -1,5 +1,7 @@
 from app.Context import Context
 from app.Resource import Resource, Action
+from database.dataclass.Person import Person
+from database.dataclass.Roster import Roster
 
 
 class RosterAssignments(Resource):
@@ -16,8 +18,11 @@ class RosterAssignments(Resource):
         """
         Assign a person to a role.
         """
-        roster = context.database.get_roster(int(roster_sequence_no))
-        person = context.database.get_person(person_id)
+        roster = context.database.get_unique(Roster, sequence_no=int(roster_sequence_no))
+        person = context.database.get(Person, identifier=person_id)
+
+        assignments = roster.assignments
+        assignments[role] = person_id
         roster.assign(person, role)
 
     @staticmethod
@@ -25,5 +30,5 @@ class RosterAssignments(Resource):
         """
         Remove a person from a roster.
         """
-        roster = context.database.get_roster(int(roster_sequence_no))
+        roster = context.database.get_unique(Roster, sequence_no=int(roster_sequence_no))
         roster.remove_person(person_id)

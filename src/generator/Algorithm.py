@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 from database.Database import Database
-from database.dataclasses.Person import Person
-from database.dataclasses.Roster import Roster
+from database.dataclass.Person import Person
+from database.dataclass.Roster import Roster
 from generator import Generator
 
 
@@ -63,7 +63,8 @@ class Algorithm(ABC):
             return 0.0
 
         score = 0.0
-        for person, role in roster.assignments.items():
+        for person_id, role in roster.assignments.items():
+            person = self.database.get_unique(Person, identifier=person_id)
             score += self.assignment_score(roster.sequence_no, person, role)
 
         return score / len(roster.persons)

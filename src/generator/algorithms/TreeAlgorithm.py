@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from typing import Optional
 
-from database.dataclasses.Pattern import Pattern
-from database.dataclasses.Person import Person
-from database.dataclasses.Roster import Roster
+from database.dataclass.Absence import Absence
+from database.dataclass.Pattern import Pattern
+from database.dataclass.Person import Person
+from database.dataclass.Roster import Roster
 from generator import Generator
 from generator.Algorithm import Algorithm
 from generator.errors.InvalidParameterError import InvalidParameterError
@@ -37,10 +38,10 @@ class TreeAlgorithm(Algorithm):
             raise InvalidParameterError()
 
     def generate_roster(self, roster_sequence_no: int) -> Roster:
-        persons = self.database.get_available_persons(roster_sequence_no)
+        persons = self.__get_available_persons(roster_sequence_no)
         rosters = []
 
-        for pattern in self.database.get_patterns():
+        for pattern in self.database.get(Pattern):
             try:
                 root = _AssignmentNode.get_root_node(roster_sequence_no, pattern, persons)
 
@@ -60,6 +61,27 @@ class TreeAlgorithm(Algorithm):
             raise NotEnoughResourcesError()
 
         return max(rosters, key=self.roster_score)
+
+    def __get_available_persons(self, roster_sequence_no) -> list[Person]:
+        """
+        Gets the list of all persons that are available for a roster.
+
+        :param roster_sequence_no: Sequence number of the roster.
+        :return: A list of persons.
+        """
+        available_persons = []
+        absences = self.database.get(Absence, roster_sequence_no=roster_sequence_no)
+
+        for person in self.database.get(Person):
+            is_available = True
+            for absence in absences:
+                if absence.person_identifier == person.identifier:
+                    is_available = False
+                    break
+            if is_available:
+                available_persons.append(person)
+
+        return available_persons
 
     def __select_best_nodes(self, nodes: list[_AssignmentNode]) -> list[_AssignmentNode]:
         """
@@ -200,11 +222,12 @@ class _AssignmentNode:
 
         :return: A roster.
         """
-        roster = Roster(self.__roster_sequence_no)
+        assignments = {}
         for role in self.__pattern.roles:
             for person in self.__get_assigned_persons(role):
-                roster.assign(person, role)
+                assignments[person.identifier] = role
 
+        roster = Roster(sequence_no=self.__roster_sequence_no, assignments=assignments)
         return roster
 
     def __get_assigned_persons(self, role: str = None) -> list[Person]:

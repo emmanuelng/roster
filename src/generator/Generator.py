@@ -2,7 +2,7 @@ from typing import Optional
 
 from configuration.Configuration import Configuration
 from database.Database import Database
-from database.dataclasses.Roster import Roster
+from database.dataclass.Roster import Roster
 from generator.Evaluator import Evaluator
 from generator.algorithms.SimpleAlgorithm import SimpleAlgorithm
 from generator.algorithms.TreeAlgorithm import TreeAlgorithm

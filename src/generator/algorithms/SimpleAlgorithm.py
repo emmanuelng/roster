@@ -1,8 +1,9 @@
 from typing import Optional
 
-from database.dataclasses.Pattern import Pattern
-from database.dataclasses.Person import Person
-from database.dataclasses.Roster import Roster
+from database.dataclass.Absence import Absence
+from database.dataclass.Pattern import Pattern
+from database.dataclass.Person import Person
+from database.dataclass.Roster import Roster
 from generator import Generator
 from generator.Algorithm import Algorithm
 from generator.errors.NotEnoughResourcesError import NotEnoughResourcesError
@@ -25,7 +26,7 @@ class SimpleAlgorithm(Algorithm):
     def generate_roster(self, roster_sequence_no: int) -> Roster:
         best_score, best_roster = None, None
 
-        for pattern in self.database.get_patterns():
+        for pattern in self.database.get(Pattern):
             try:
                 roster = self.__generate_roster_with_pattern(roster_sequence_no, pattern)
                 score = self.roster_score(roster)
@@ -48,7 +49,7 @@ class SimpleAlgorithm(Algorithm):
         :param pattern: Pattern to use.
         :return: A roster.
         """
-        roster = Roster(sequence_no)
+        roster = Roster(sequence_no=sequence_no)
 
         for role in pattern.roles:
             number = pattern.assignments[role]
@@ -81,10 +82,32 @@ class SimpleAlgorithm(Algorithm):
         :param role: The role
         :return: A list of persons.
         """
-        persons = self.database.get_available_persons(roster.sequence_no, role=role)
+        persons = self.__get_available_persons(roster.sequence_no)
+        persons = filter(lambda p: p.has_role(role), persons)
         persons = list(filter(lambda p: not roster.is_assigned(p), persons))
 
         if len(persons) == 0:
             raise NotEnoughResourcesError()
 
         return persons
+
+    def __get_available_persons(self, roster_sequence_no) -> list[Person]:
+        """
+        Gets the list of all persons that are available for a roster.
+
+        :param roster_sequence_no: Sequence number of the roster.
+        :return: A list of persons.
+        """
+        available_persons = []
+        absences = self.database.get(Absence, roster_sequence_no=roster_sequence_no)
+
+        for person in self.database.get(Person):
+            is_available = True
+            for absence in absences:
+                if absence.person_identifier == person.identifier:
+                    is_available = False
+                    break
+            if is_available:
+                available_persons.append(person)
+
+        return available_persons

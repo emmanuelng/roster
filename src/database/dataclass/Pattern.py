@@ -1,15 +1,14 @@
-from dataclasses import dataclass, field
+from database.Dataclass import Dataclass, Field
 
 
-@dataclass(order=True)
-class Pattern:
+class Pattern(Dataclass):
     """
     Roster pattern. Represents a pattern that can be used to generate a roster. A pattern defines the roles that are
     needed and the number of persons required for each of them.
     """
 
     identifier: str
-    assignments: dict[str, int] = field(compare=False, default_factory=dict)
+    assignments: dict[str, int] = Field(key=False, default_factory=dict)
 
     @property
     def roles(self) -> list[str]:

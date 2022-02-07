@@ -1,8 +1,7 @@
-from dataclasses import dataclass
+from database.Dataclass import Dataclass
 
 
-@dataclass(frozen=True, order=True)
-class Absence:
+class Absence(Dataclass):
     """
     Represents an an absence of a person for a given roster.
     """

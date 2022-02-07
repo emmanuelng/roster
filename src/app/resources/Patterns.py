@@ -3,7 +3,7 @@ from typing import Union
 from app.Context import Context
 from app.Resource import Resource, Action
 from app.errors.InvalidArgumentError import InvalidArgumentError
-from database.dataclasses.Pattern import Pattern
+from database.dataclass.Pattern import Pattern
 
 
 class Patterns(Resource):
@@ -30,9 +30,7 @@ class Patterns(Resource):
         :param pattern_id: Identifier of the pattern.
         :return: The newly created pattern.
         """
-        pattern = Pattern(identifier=pattern_id)
-        context.database.add_pattern(pattern)
-        return pattern
+        return context.database.create(Pattern, identifier=pattern_id)
 
     @staticmethod
     def delete(context: Context, pattern_id: str) -> None:
@@ -42,7 +40,7 @@ class Patterns(Resource):
         :param context: The context.
         :param pattern_id: Identifier of the pattern.
         """
-        context.database.remove_pattern(pattern_id)
+        context.database.delete(Pattern, identifier=pattern_id)
 
     @staticmethod
     def get(context: Context, pattern_id: str) -> Pattern:
@@ -54,7 +52,7 @@ class Patterns(Resource):
          found.
         :return:The pattern having the given identifier.
         """
-        return context.database.get_pattern(pattern_id)
+        return context.database.get_unique(Pattern, identifier=pattern_id)
 
     @staticmethod
     def list(context: Context) -> list[Pattern]:
@@ -64,8 +62,8 @@ class Patterns(Resource):
         :param context: The context.
         :return: List of patterns sorted by identifier.
         """
-        patterns = context.database.get_patterns()
-        patterns.sort()
+        patterns = context.database.get(Pattern)
+        patterns.sort(key=lambda p: p.identifier)
         return patterns
 
     @staticmethod
@@ -85,7 +83,9 @@ class Patterns(Resource):
             if int(number) <= 0:
                 raise InvalidArgumentError("number")
 
-            pattern = context.database.get_pattern(pattern_id)
-            pattern.assignments[role] = int(number)
+            pattern = context.database.get_unique(Pattern, identifier=pattern_id)
+            assignments = pattern.assignments
+            assignments[role] = int(number)
+            context.database.update(pattern, assignments=assignments)
         except ValueError:
             raise InvalidArgumentError("number")

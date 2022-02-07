@@ -1,167 +1,150 @@
-from abc import ABC, abstractmethod
 from typing import Optional
 
-from database.dataclasses.Absence import Absence
-from database.dataclasses.Pattern import Pattern
-from database.dataclasses.Person import Person
-from database.dataclasses.Roster import Roster
+from database.Dataclass import Dataclass, Schema
+from database.Driver import Driver
+from database.dataclass.Absence import Absence
+from database.dataclass.Pattern import Pattern
+from database.dataclass.Person import Person
+from database.dataclass.Roster import Roster
+from database.drivers.ListDriver import ListDriver
+from database.errors.DuplicateKeyError import DuplicateKeyError
+from database.errors.IncompleteKeyError import IncompleteKeyError
+from database.errors.InvalidDataclassError import InvalidDataclassError
+from database.errors.KeyModificationError import KeyModificationError
+from database.errors.ObjectNotFoundError import ObjectNotFoundError
 
 
-class Database(ABC):
+class Database:
     """
-    Represents a set of data used by the program. This class is responsible for reading and saving the data.
+    Database class. A database manages data classes. A driver allows the database to interact with the system.
     """
 
-    @abstractmethod
-    def add_absence(self, absence: Absence) -> None:
-        """
-        Adds an absence.
+    __driver: Driver
+    __data_classes: list[type]
 
-        :param absence: Absence to add.
+    def __init__(self, driver: Driver = None):
         """
-        pass
+        Constructor.
 
-    @abstractmethod
-    def add_pattern(self, pattern: Pattern) -> None:
+        :param driver: The driver to use.
         """
-        Adds a pattern to the list of patterns.
+        self.__driver = driver if driver else ListDriver()
+        self.__data_classes = []
 
-        :param pattern: Pattern to add.
-        """
-        pass
+        # Register default dataclasses.
+        self._dataclass(Absence)
+        self._dataclass(Pattern)
+        self._dataclass(Person)
+        self._dataclass(Roster)
 
-    @abstractmethod
-    def add_person(self, person: Person) -> None:
+    def create(self, data_class: type, **kwargs) -> Dataclass:
         """
-        Adds a person to the list of persons.
+        Creates a new data object.
 
-        :param person: Person to add.
+        :param data_class: Class of the object.
+        :param kwargs: Initial values of the object.
+        :return: The newly created object.
         """
-        pass
+        if data_class not in self.__data_classes:
+            raise InvalidDataclassError(data_class)
 
-    @abstractmethod
-    def add_roster(self, roster: Roster) -> None:
-        """
-        Adds a roster to the list of rosters.
+        data_object = data_class(**kwargs)
+        if self.__driver.exists(data_class, **data_object.key()):
+            raise DuplicateKeyError()
 
-        :param roster: The roster to add.
-        """
-        pass
+        self.__driver.create_object(data_object)
+        return data_object
 
-    @abstractmethod
-    def get_absences(self, person: Person = None, roster_sequence_no: int = None) -> list[Absence]:
+    def clear(self, data_class: Optional[type] = None) -> None:
         """
-        Returns the absences corresponding to certain criteria.
+        Clears objects.
 
-        :param person: If provided, only returns the absences of this person.
-        :param roster_sequence_no: If provided, only returns absences for this roster.
-        :return: List of absences.
+        :param data_class: The class of objects to clear. If None, clears the entire database.
         """
-        pass
+        if data_class is None:
+            for current_data_class in self.__data_classes:
+                self.__driver.clear_objects(current_data_class)
+            return
 
-    @abstractmethod
-    def get_available_persons(self, roster_sequence_no: int, role: str = None) -> list[Person]:
-        """
-        Returns the list of available persons for a roster.
+        if data_class not in self.__data_classes:
+            raise InvalidDataclassError(data_class)
 
-        :param roster_sequence_no: Sequence number of the roster.
-        :param role: If given, only returns the persons with this role.
-        :return: A list of persons.
-        """
-        pass
+        self.__driver.clear_objects(data_class)
 
-    @abstractmethod
-    def get_pattern(self, identifier: str) -> Pattern:
+    def delete(self, data_class: type, **kwargs) -> None:
         """
-        Finds a pattern using an identifier.
+        Deletes data objects.
 
-        :return: The pattern or None if the identifier doesn't exist.
+        :param data_class: The class of objects to delete.
+        :param kwargs: Search values. Objects having all the given values will be deleted.
         """
-        pass
+        if data_class not in self.__data_classes:
+            raise InvalidDataclassError(data_class)
+        else:
+            self.__driver.delete_objects(data_class, **kwargs)
 
-    @abstractmethod
-    def get_patterns(self) -> list[Pattern]:
+    def get(self, data_class: type, **kwargs) -> list[Dataclass]:
         """
-        Returns the list of patterns.
+        Gets data objects.
 
-        :return: A list of patterns.
+        :param data_class: The class of objects to get.
+        :param kwargs: Search values. Objects having all the given values will be returned.
+        :return: List of data objects corresponding to the given search values.
         """
-        pass
+        if data_class not in self.__data_classes:
+            raise InvalidDataclassError(data_class)
+        else:
+            objects = self.__driver.read_objects(data_class, **kwargs)
+            return objects
 
-    @abstractmethod
-    def get_person(self, identifier: str) -> Person:
+    def get_unique(self, data_class: type, **kwargs) -> Dataclass:
         """
-        Finds the person with the given identifier.
+        Gets a unique data object.
 
-        :return: The Person or None if the identifier doesn't exist.
+        :param data_class: The class of the object.
+        :param kwargs: Key values. All elements of the key of the desired object must be provided.
+        :return: The object.
         """
-        pass
+        if data_class not in self.__data_classes:
+            raise InvalidDataclassError(data_class)
 
-    @abstractmethod
-    def get_persons(self, identifier: str = None, role: str = None) -> list[Person]:
-        """
-        Returns the list of persons.
+        for field_name in Schema(data_class).key_fields.keys():
+            if field_name not in kwargs:
+                raise IncompleteKeyError(field_name)
 
-        :param identifier: If given, only returns the person with this identifier.
-        :param role: If given, only returns the persons with this role.
-        :return: A list of persons.
-        """
-        pass
+        objects = self.__driver.read_objects(data_class, **kwargs)
+        if not objects:
+            raise ObjectNotFoundError()
 
-    @abstractmethod
-    def get_roster(self, sequence_no: int) -> Optional[Roster]:
-        """
-        Finds the roster with the given sequence number.
+        return objects[0]
 
-        :param sequence_no: The sequence number.
-        :return: The roster or None if it does not exist.
+    def update(self, data_object: Dataclass, **kwargs) -> Dataclass:
         """
-        pass
+        Updates a data object.
 
-    @abstractmethod
-    def get_rosters(self, sequence_no: int = None, before: int = None, after: int = None) -> list[Roster]:
+        :param data_object: Data object to modify.
+        :param kwargs: New values.
+        :return: An copy of the given data object with the new values.
         """
-        Returns the list of rosters.
+        if data_object.__class__ not in self.__data_classes:
+            raise InvalidDataclassError(data_object.__class__)
 
-        :param sequence_no: If given, only returns the roster with this sequence number.
-        :param before: If given, only returns the rosters before this sequence number.
-        :param after: If given, only returns the rosters after this sequence number.
-        :return: A list of rosters.
-        """
-        pass
+        updated_data_object = data_object.replace(**kwargs)
+        if data_object.key() != updated_data_object.key():
+            diff = list(dict(set(data_object.key().items()) ^ set(updated_data_object.key().items())).keys())
+            raise KeyModificationError(diff)
 
-    @abstractmethod
-    def remove_absence(self, roster_sequence_no: int, person: Person) -> None:
-        """
-        Removes an absence.
+        self.__driver.update_object(updated_data_object)
+        return updated_data_object
 
-        :param roster_sequence_no: Sequence number of the roster in which the person will be absent.
-        :param person: The absent person.
+    def _dataclass(self, dataclass: type) -> None:
         """
-        pass
+        Registers a data class.
 
-    @abstractmethod
-    def remove_pattern(self, identifier: str) -> None:
+        :param dataclass: Data class to register.
         """
-        Removes a pattern from the list of patterns.
+        if not issubclass(dataclass, Dataclass):
+            raise Exception()
 
-        :param identifier: Identifier of the patterns.
-        """
-        pass
-
-    @abstractmethod
-    def remove_person(self, identifier: str) -> None:
-        """
-        Removes a person from the list of persons.
-        :param identifier: Identifier of the person.
-        """
-        pass
-
-    @abstractmethod
-    def remove_roster(self, sequence_no: int) -> None:
-        """
-        Removes a roster from the list of rosters.
-
-        :param sequence_no: Identifier of the roster.
-        """
-        pass
+        if dataclass not in self.__data_classes:
+            self.__data_classes.append(dataclass)
