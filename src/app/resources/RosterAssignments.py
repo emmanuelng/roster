@@ -1,5 +1,8 @@
+from typing import Union
+
 from app.Context import Context
 from app.Resource import Resource, Action
+from app.errors.InvalidArgumentError import InvalidArgumentError
 from database.dataclass.Person import Person
 from database.dataclass.Roster import Roster
 
@@ -7,6 +10,9 @@ from database.dataclass.Roster import Roster
 class RosterAssignments(Resource):
 
     def __init__(self) -> None:
+        """
+        Constructor.
+        """
         super().__init__()
 
         # Methods
@@ -14,21 +20,47 @@ class RosterAssignments(Resource):
         self._method("delete", Action.DELETE, self.delete)
 
     @staticmethod
-    def create(context: Context, roster_sequence_no: str, person_id: str, role: str) -> None:
+    def create(context: Context, roster_sequence_no: Union[int, str], person_id: str, role: str) -> None:
         """
         Assign a person to a role.
-        """
-        roster = context.database.get_unique(Roster, sequence_no=int(roster_sequence_no))
-        person = context.database.get(Person, identifier=person_id)
 
-        assignments = roster.assignments
-        assignments[role] = person_id
-        roster.assign(person, role)
+        :param context: The context.
+        :param roster_sequence_no: Roster sequence number.
+        :param person_id: Person identifier.
+        :param role: Role of the person.
+        """
+        if not role:
+            raise InvalidArgumentError("role")
+
+        try:
+            roster = context.database.get_unique(Roster, sequence_no=int(roster_sequence_no))
+            person = context.database.get_unique(Person, identifier=person_id)
+
+            assignments = roster.assignments
+            assignments[person.identifier] = role
+            context.database.update(roster, assignments=assignments)
+        except ValueError:
+            raise InvalidArgumentError("roster_sequence_no")
 
     @staticmethod
-    def delete(context: Context, roster_sequence_no: str, person_id: str) -> None:
+    def delete(context: Context, roster_sequence_no: Union[int, str], person_id: str) -> None:
         """
-        Remove a person from a roster.
+        Delete an assignment.
+
+        :param context: The context.
+        :param roster_sequence_no: Roster sequence number.
+        :param person_id: Identifier of the person.
         """
-        roster = context.database.get_unique(Roster, sequence_no=int(roster_sequence_no))
-        roster.remove_person(person_id)
+
+        try:
+            roster = context.database.get_unique(Roster, sequence_no=int(roster_sequence_no))
+            person = context.database.get_unique(Person, identifier=person_id)
+
+            if person.identifier not in roster.assignments:
+                return
+
+            assignments = roster.assignments
+            assignments.pop(person.identifier)
+            context.database.update(roster, assignments=assignments)
+        except ValueError:
+            raise InvalidArgumentError("roster_sequence_no")
