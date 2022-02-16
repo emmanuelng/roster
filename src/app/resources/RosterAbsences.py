@@ -31,7 +31,7 @@ class RosterAbsences(Resource):
         :return: The newly created absence.
         """
         try:
-            person = context.database.get_unique(Person, identifier=person_id)
+            person: Person = context.database.get_unique(Person, identifier=person_id)
             return context.database.create(Absence,
                                            roster_sequence_no=int(roster_sequence_no),
                                            person_identifier=person.identifier)
@@ -48,8 +48,10 @@ class RosterAbsences(Resource):
         :param person_id: Identifier of the person.
         """
         try:
-            context.database.get_unique(Person, identifier=person_id)
-            context.database.delete(Absence, roster_sequence_no=int(roster_sequence_no), person_identifier=person_id)
+            person: Person = context.database.get_unique(Person, identifier=person_id)
+            context.database.delete(Absence,
+                                    roster_sequence_no=int(roster_sequence_no),
+                                    person_identifier=person.identifier)
         except ValueError:
             raise InvalidArgumentError("roster_sequence_no")
 
@@ -63,7 +65,7 @@ class RosterAbsences(Resource):
         :return: A list of absences, sorted by person names.
         """
         try:
-            absences = context.database.get(Absence, roster_sequence_no=int(roster_sequence_no))
+            absences: list[Absence] = context.database.get(Absence, roster_sequence_no=int(roster_sequence_no))
             absences.sort(key=lambda a: context.database.get_unique(Person, identifier=a.person_identifier).full_name)
             return absences
         except ValueError:

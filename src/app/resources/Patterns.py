@@ -62,7 +62,7 @@ class Patterns(Resource):
         :param context: The context.
         :return: List of patterns sorted by identifier.
         """
-        patterns = context.database.get(Pattern)
+        patterns: list[Pattern] = context.database.get(Pattern)
         patterns.sort(key=lambda p: p.identifier)
         return patterns
 
@@ -83,7 +83,7 @@ class Patterns(Resource):
             if int(number) <= 0:
                 raise InvalidArgumentError("number")
 
-            pattern = context.database.get_unique(Pattern, identifier=pattern_id)
+            pattern: Pattern = context.database.get_unique(Pattern, identifier=pattern_id)
             assignments = pattern.assignments
             assignments[role] = int(number)
             context.database.update(pattern, assignments=assignments)

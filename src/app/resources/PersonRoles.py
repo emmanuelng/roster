@@ -29,7 +29,7 @@ class PersonRoles(Resource):
         if not role:
             raise InvalidArgumentError("role")
 
-        person = context.database.get_unique(Person, identifier=person_id)
+        person: Person = context.database.get_unique(Person, identifier=person_id)
         if person is not None and not person.has_role(role):
             context.database.update(person, roles=person.roles + [role])
 
@@ -42,7 +42,8 @@ class PersonRoles(Resource):
         :param person_id: Identifier of the person.
         :return: A list of roles.
         """
-        roles = context.database.get_unique(Person, identifier=person_id).roles
+        person: Person = context.database.get_unique(Person, identifier=person_id)
+        roles = person.roles
         roles.sort()
         return roles
 
@@ -58,7 +59,7 @@ class PersonRoles(Resource):
         if not role:
             raise InvalidArgumentError("role")
 
-        person = context.database.get_unique(Person, identifier=person_id)
+        person: Person = context.database.get_unique(Person, identifier=person_id)
         if not person.has_role(role):
             return
 

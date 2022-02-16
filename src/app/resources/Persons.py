@@ -65,6 +65,6 @@ class Persons(Resource):
         :param context: The context.
         :return: The list of all registered persons, sorted by last name / first name.
         """
-        persons = context.database.get(Person)
+        persons: list[Person] = context.database.get(Person)
         persons.sort(key=lambda p: f"{p.last_name, p.first_name}")
         return persons

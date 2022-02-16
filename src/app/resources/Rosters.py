@@ -7,6 +7,7 @@ from app.resources.RosterAbsences import RosterAbsences
 from app.resources.RosterAssignments import RosterAssignments
 from configuration.Configuration import Configuration
 from database.dataclass.Roster import Roster
+from database.errors.ObjectNotFoundError import ObjectNotFoundError
 from generator.Generator import Generator
 
 
@@ -66,8 +67,17 @@ class Rosters(Resource):
         :return: The generated roster.
         """
         try:
-            roster = Generator(context.database, Configuration()).generate_roster(int(sequence_no))
-            return context.database.create(Roster, sequence_no=roster.sequence_no, assignments=roster.assignments)
+            existing_roster = context.database.get_unique(Roster, sequence_no=sequence_no)
+        except ObjectNotFoundError:
+            existing_roster = None
+
+        try:
+            res = Generator(context.database, Configuration()).generate_roster(int(sequence_no))
+
+            if existing_roster is not None:
+                return context.database.update(existing_roster, assignments=res.assignments)
+
+            return context.database.create(Roster, sequence_no=res.sequence_no, assignments=res.assignments)
         except ValueError:
             raise InvalidArgumentError("sequence_no")
 
@@ -94,6 +104,6 @@ class Rosters(Resource):
         :param context: The context.
         :return: List of rosters.
         """
-        rosters = context.database.get(Roster)
+        rosters: list[Roster] = context.database.get(Roster)
         rosters.sort(key=lambda r: r.sequence_no)
         return rosters

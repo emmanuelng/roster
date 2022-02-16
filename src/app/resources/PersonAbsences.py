@@ -31,7 +31,7 @@ class PersonAbsences(Resource):
         :return: The newly created absence.
         """
         try:
-            person = context.database.get_unique(Person, identifier=person_id)
+            person: Person = context.database.get_unique(Person, identifier=person_id)
             return context.database.create(Absence,
                                            roster_sequence_no=int(roster_sequence_no),
                                            person_identifier=person.identifier)
@@ -47,8 +47,10 @@ class PersonAbsences(Resource):
         :param person_id: Identifier of the person.
         :param roster_sequence_no: Sequence number of the roster.
         """
-        context.database.get_unique(Person, identifier=person_id)
-        context.database.delete(Absence, roster_sequence_no=int(roster_sequence_no), person_identifier=person_id)
+        person: Person = context.database.get_unique(Person, identifier=person_id)
+        context.database.delete(Absence,
+                                roster_sequence_no=int(roster_sequence_no),
+                                person_identifier=person.identifier)
 
     @staticmethod
     def list(context: Context, person_id: str) -> list[Absence]:
@@ -59,7 +61,7 @@ class PersonAbsences(Resource):
         :param person_id: Identifier of the person.
         :return: A list of absences, sorted by roster sequence number.
         """
-        person = context.database.get_unique(Person, identifier=person_id)
-        absences = context.database.get(Absence, person_identifier=person.identifier)
+        person: Person = context.database.get_unique(Person, identifier=person_id)
+        absences: list[Absence] = context.database.get(Absence, person_identifier=person.identifier)
         absences.sort(key=lambda a: a.roster_sequence_no)
         return absences

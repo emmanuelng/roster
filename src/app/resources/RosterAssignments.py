@@ -33,8 +33,8 @@ class RosterAssignments(Resource):
             raise InvalidArgumentError("role")
 
         try:
-            roster = context.database.get_unique(Roster, sequence_no=int(roster_sequence_no))
-            person = context.database.get_unique(Person, identifier=person_id)
+            roster: Roster = context.database.get_unique(Roster, sequence_no=int(roster_sequence_no))
+            person: Person = context.database.get_unique(Person, identifier=person_id)
 
             assignments = roster.assignments
             assignments[person.identifier] = role
@@ -53,8 +53,8 @@ class RosterAssignments(Resource):
         """
 
         try:
-            roster = context.database.get_unique(Roster, sequence_no=int(roster_sequence_no))
-            person = context.database.get_unique(Person, identifier=person_id)
+            roster: Roster = context.database.get_unique(Roster, sequence_no=int(roster_sequence_no))
+            person: Person = context.database.get_unique(Person, identifier=person_id)
 
             if person.identifier not in roster.assignments:
                 return
