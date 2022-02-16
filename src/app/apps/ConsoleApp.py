@@ -2,7 +2,6 @@ import sys
 
 from app.App import App
 from app.errors.MethodNotFoundError import MethodNotFoundError
-from app.resources.Configurations import Configurations
 from database.Database import Database
 from database.drivers.JsonDriver import JsonDriver
 
@@ -14,9 +13,6 @@ class ConsoleApp(App):
 
     def __init__(self):
         super().__init__(Database(driver=JsonDriver()))
-
-        # Resources
-        self._resource("config", Configurations())
 
     def start(self) -> None:
         try:
